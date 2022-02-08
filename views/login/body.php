@@ -1,6 +1,6 @@
 <div id="blur">
     <div class="container">
-        <div class="preloader d-none">
+        <div class="preloader" style="display: none;">
             <img src="<?php echo ASSETS . "images/Settings.gif" ?>" alt="preloader" id="preloader">
         </div>
         <!-- Outer Row -->

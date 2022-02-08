@@ -11,11 +11,7 @@
 
 <body>
 
-    <?php
-
-    echo "Hi";
-
-    ?>
+    <?php include('views/login/body.php'); ?>
 
     <!-- Start of Footer -->
 

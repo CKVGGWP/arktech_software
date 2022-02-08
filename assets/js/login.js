@@ -14,15 +14,15 @@ $(document).ready(function () {
         data: { login: true, username: username, password: password },
         beforeSend: function () {
           $("#blur").addClass("blur-active");
-          $(".preloader").addClass("d-block");
+          $(".preloader").show();
         },
         complete: function () {
           $("#blur").removeClass("blur-active");
-          $(".preloader").removeClass("d-block");
+          $(".preloader").hide();
         },
         success: function (response) {
           if (response == "1") {
-            window.location.href = "dashboard.php";
+            window.location.href = "dashboard.php?title=Dashboard";
           } else if (response == "2") {
             $("#loginError").html("Username is incorrect");
           } else if (response == "3") {

@@ -37,14 +37,14 @@ function count_id()
 function getTitle()
 {
 
-    $id = isset($_GET['id']) ? $_GET['id'] : '';
+    $id = isset($_GET['title']) ? $_GET['title'] : '';
 
     $title = '';
 
     if (!empty($id)) :
         $title .= $id;
     else :
-        $title .= 'Login | ArkTech Manufacturing';
+        $title .= 'Login | Arktech Manufacturing';
     endif;
 
     return $title;
