@@ -23,10 +23,11 @@ class Login extends Database
             exit();
         }
 
-        if ($this->setSessionID()) {
+        if ($this->getSessionID()) {
             echo "1";
-            exit();
         }
+
+        return true;
     }
 
     private function checkUser()
@@ -53,16 +54,22 @@ class Login extends Database
         }
     }
 
-
-
-    private function setSessionID()
+    private function getSessionID()
     {
         $sql = "SELECT * FROM hr_employee WHERE userName = '$this->username' AND userPassword = '$this->password'";
         $result = $this->connect()->query($sql);
 
         if ($row = $result->fetch_assoc()) {
-            $_SESSION['userID'] = $row['employeeId'];
+            $id = $row['employeeId'];
         }
+
+        return $id;
+    }
+
+    public function setSessionID()
+    {
+        $id = $this->getSessionID();
+        $_SESSION['userID'] = $id;
 
         return $_SESSION['userID'];
     }

@@ -8,5 +8,9 @@ if (isset($_POST['login'])) {
     $password = $_POST['password'];
 
     $login = new Login($username, $password);
-    $login->login();
+
+    if ($login->login()) {
+        session_start();
+        $login->setSessionID();
+    }
 }
