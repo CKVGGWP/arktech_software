@@ -42,7 +42,7 @@ function getTitle()
     $title = '';
 
     if (!empty($id)) :
-        $title .= $id;
+        $title .= $id . " | Arktech Manufacturing";
     else :
         $title .= 'Login | Arktech Manufacturing';
     endif;

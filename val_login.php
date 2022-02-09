@@ -1,3 +1,5 @@
+<?php require('config/ck_config.php'); ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -11,7 +13,11 @@
 
 <body>
 
-    <?php include('views/login/body.php'); ?>
+    <!-- Start of Login -->
+
+    <?php include('views/login/val_body.php'); ?>
+
+    <!-- End of Login -->
 
     <!-- Start of Footer -->
 
@@ -19,5 +25,7 @@
 
     <!-- End of Footer -->
 </body>
+
+<script src="assets/js/ck_login.js"></script>
 
 </html>

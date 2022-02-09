@@ -9,7 +9,7 @@ $(document).ready(function () {
       $("#loginError").html("Please enter your username and password");
     } else {
       $.ajax({
-        url: "controllers/login_controller.php",
+        url: "controllers/ck_loginController.php",
         type: "POST",
         data: { login: true, username: username, password: password },
         beforeSend: function () {
@@ -22,7 +22,7 @@ $(document).ready(function () {
         },
         success: function (response) {
           if (response == "1") {
-            window.location.href = "dashboard.php?title=Dashboard";
+            window.location.href = "index.php?title=Dashboard";
           } else if (response == "2") {
             $("#loginError").html("Username is incorrect");
           } else if (response == "3") {

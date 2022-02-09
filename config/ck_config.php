@@ -20,6 +20,7 @@ define('PROTOCOL', 'http');
 
 $path = str_replace("\\", "/", PROTOCOL . "://" . $_SERVER['SERVER_NAME'] . __DIR__  . "/");
 $path = str_replace($_SERVER['DOCUMENT_ROOT'], "", $path);
+$newPath = $_SERVER['DOCUMENT_ROOT'] . "/Arktech Main/";
 
 define('ROOT', str_replace("config", "public", $path));
 define('ASSETS', str_replace("config", "assets", $path));

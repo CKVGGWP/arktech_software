@@ -1,7 +1,7 @@
 <div id="blur">
     <div class="container">
         <div class="preloader" style="display: none;">
-            <img src="<?php echo ASSETS . "images/Settings.gif" ?>" alt="preloader" id="preloader">
+            <img src="assets/images/Settings.gif" alt="preloader" id="preloader">
         </div>
         <!-- Outer Row -->
         <div class="row justify-content-center">
@@ -15,7 +15,7 @@
                             <div class="col-lg-6 d-none d-lg-block">
                                 <div class="py-5">
                                     <div class="py-5">
-                                        <img src="<?php echo ASSETS . "images/arkLogoHD.png" ?>" class="mt-4 ms-4 d-block" alt="ArkTechLogo" width="100%">
+                                        <img src="assets/images/arkLogoHD.png" class="mt-4 ms-4 d-block" alt="ArkTechLogo" width="100%">
                                     </div>
                                 </div>
 
