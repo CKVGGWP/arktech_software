@@ -1,10 +1,11 @@
 $(document).ready(function () {
+  checkHolidays();
+
   function checkHolidays() {
     $.ajax({
-      url: "controllers/ck_leaveFormController.php",
+      url: "controllers/ck_holidayController.php",
       type: "GET",
       data: { calendar: 1 },
-      dataType: "json",
       success: function (data) {
         let parsed = JSON.parse(data);
 
@@ -21,8 +22,6 @@ $(document).ready(function () {
       },
     });
   }
-
-  checkHolidays();
 
   $("#leaveForm").on("submit", function (e) {
     e.preventDefault();
@@ -58,7 +57,7 @@ $(document).ready(function () {
       });
     } else {
       $.ajax({
-        url: "controllers/ck_leaveFormController.php",
+        url: "controllers/ck_holidayController.php",
         type: "POST",
         data: {
           leave: 1,

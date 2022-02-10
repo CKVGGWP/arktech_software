@@ -1,26 +1,20 @@
-<?php //include('controllers/val_checkLeaveStatus.php'); 
+<?php include('controllers/val_checkLeaveStatus.php');
 ?>
 <main class="container">
-    <div class="row d-flex justify-content-center">
+    <div class="d-flex justify-content-center">
         <!------------------- DataTables Example ----------------->
         <div class="card shadow mb-4">
             <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">Users</h6>
+                <h6 class="m-0 font-weight-bold text-primary">Check Leave Status</h6>
             </div>
             <div class="card-body">
 
                 <!------------------------ Textbox Search ----------------------->
                 <div class="row mb-3 ml-1">
                     <div class="form-group mb-3">
-                        <label for="userFirstname">First Name</label>
+                        <label for="userFirstname">Filter & Search</label>
                         <div class="col-sm">
-                            <input type="name" class="form-control" id="userFirstname" onkeyup="searchFirstName()" name="userFirstname">
-                        </div>
-                    </div>
-                    <div class="form-group mb-3">
-                        <label for="userSurname">Last Name</label>
-                        <div class="col-sm">
-                            <input type="name" class="form-control" id="userSurname" onkeyup="searchSurname()" name="userSurname">
+                            <input type="name" class="form-control" id="filter" onkeyup="filter()" name="filter">
                         </div>
                     </div>
                 </div>
@@ -39,6 +33,11 @@
                                 <th>Status</th>
                                 <th>Reason of Superior</th>
                                 <th>Date</th>
+                                <th>Approved / Denied by Superior</th>
+                                <th>Approved / Denied by Leader</th>
+                                <th>Date Approved / Denied by Leader</th>
+                                <th>Date Approved / Denied by Superior</th>
+                                <th>LeaderApproval Flag</th>
                             </tr>
                         </thead>
                         <tbody>

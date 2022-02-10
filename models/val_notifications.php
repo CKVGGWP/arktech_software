@@ -1,10 +1,17 @@
 <?php
 
-class LeaveStatus extends Database
+class Notifications extends Database
 {
-    public function getTable()
+    public function getTable($userID)
     {
-        $query = "SELECT * FROM system_leaveform";
+
+        $query = "SELECT n.notificationId, d.notificationDetail, d.notificationKey, 
+                            l.dateIssued, l.employeeNumber, l.employeeName, l.designation,
+                            l.department, l.purposeOfLeave, l.leaveFrom, l.leaveTo
+                    FROM `system_notification` n 
+                    JOIN system_notificationdetails d ON n.notificationId = d.notificationId
+                    JOIN system_leaveform l ON n.listId = l.listId
+                    WHERE n.`notificationTarget` = '$userID'";
         $sql = $this->connect()->query($query);
         $data = [];
         $totalData = 0;
@@ -13,22 +20,12 @@ class LeaveStatus extends Database
                 extract($result);
 
                 $data[] = [
-                    $dateIssued,
-                    $employeeNumber,
-                    $employeeName,
-                    $designation,
-                    $department,
-                    $purposeOfLeave,
-                    $leaveFrom,
-                    $leaveTo,
-                    $status,
-                    $reasonofSuperior,
-                    $date,
-                    $approvedDeniedBySuperior,
-                    $approvedDeniedByLeader,
-                    $dateApprevDenyByLeader,
-                    $dateApproveDenyBySuperior,
-                    $leaderApprovalFlag,
+                    $notificationId,
+                    $notificationDetail,
+                    $notificationKey,
+                    '<div class="btn-group">
+                        <a class="btn btn-warning" href="val_editForm.php?userId=' . $listId . '">Edit</a>
+                    </div>',
                 ];
                 $totalData++;
             }

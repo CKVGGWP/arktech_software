@@ -12,13 +12,13 @@
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="val_notifications.php?title=Notifications">
-                    <div class="nav-link"><i class="fas fa-bell"></i> Notification </div>
+                <a class="nav-link" href="val_checkLeaveStatus.php?title=Leave Status">
+                    <div class="nav-link"><i class="fas fa-status"></i> Status </div>
                 </a>
             </li>
             <li class="nav-item">
-                <a class="nav-link" href="val_checkLeaveStatus.php?title=Leave Status">
-                    <div class="nav-link"><i class="fas fa-status"></i> Status </div>
+                <a class="nav-link" href="val_notifications.php?title=Notifications">
+                    <div class="nav-link"><i class="fas fa-bell"></i> Notification </div>
                 </a>
             </li>
         </ul>

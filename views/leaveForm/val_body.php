@@ -1,3 +1,4 @@
+        <?php include('controllers/ck_leaveFormController.php'); ?>
         <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
             <div id="blur">
                 <div class="preloader" style="display: none;">
@@ -16,11 +17,11 @@
                                         <div class="form-group">
                                             <label for="Employee">Employee: </label>
                                             <select class="form-control" id="employee_active" name="employee_active">
-                                                <?php foreach ($userByID as $key => $currentUser) : ?>
-                                                    <option value="<?php echo $currentUser['employeeId'] ?>" selected><?php echo $currentUser['firstName'] . " " . $currentUser['surName'] ?></option>
+                                                <?php foreach ($userById as $key => $currentUser) : ?>
+                                                    <option value="<?php echo $currentUser['idNumber'] ?>" selected><?php echo $currentUser['firstName'] . " " . $currentUser['surName'] ?></option>
                                                 <?php endforeach; ?>
                                                 <?php foreach ($users as $key => $allUsers) : ?>
-                                                    <option value="<?php echo $allUsers['employeeId'] ?>"><?php echo $allUsers['firstName'] . " " . $allUsers['surName'] ?></option>
+                                                    <option value="<?php echo $allUsers['idNumber'] ?>"><?php echo $allUsers['firstName'] . " " . $allUsers['surName'] ?></option>
                                                 <?php endforeach; ?>
                                             </select>
                                         </div>

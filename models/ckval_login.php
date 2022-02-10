@@ -60,7 +60,7 @@ class Login extends Database
         $result = $this->connect()->query($sql);
 
         if ($row = $result->fetch_assoc()) {
-            $id = $row['employeeId'];
+            $id = $row['idNumber'];
         }
 
         return $id;

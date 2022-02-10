@@ -21,6 +21,7 @@
     <!-- Start of Footer -->
 
     <?php include('views/includes/footer/footer.php'); ?>
+    <script src="assets/js/val_notifications.js"></script>
 
     <!-- End of Footer -->
 </body>
