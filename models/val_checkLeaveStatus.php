@@ -2,9 +2,9 @@
 
 class LeaveStatus extends Database
 {
-    public function getTable()
+    public function getTable($id)
     {
-        $query = "SELECT * FROM system_leaveform";
+        $query = "SELECT * FROM system_leaveform WHERE employeeNumber = '$id'";
         $sql = $this->connect()->query($query);
         $data = [];
         $totalData = 0;

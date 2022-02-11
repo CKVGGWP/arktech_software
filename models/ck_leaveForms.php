@@ -90,16 +90,43 @@ class LeaveForm extends Database
         return $position;
     }
 
+    // Get the last ID of table system_leaveform
+    private function leaveFormLastId()
+    {
+        $sql = "SELECT listId FROM system_leaveform ORDER BY listId DESC LIMIT 1";
+        $result = $this->connect()->query($sql);
+
+        if ($row = $result->fetch_assoc()) {
+            $id = $row['listId'];
+        }
+
+        return $id;
+    }
+
+    // Get the last ID of table system_notificationdetails
+    private function notificationLastID()
+    {
+        $sql = "SELECT notificationId FROM system_notificationdetails ORDER BY notificationId DESC LIMIT 1";
+        $result = $this->connect()->query($sql);
+
+        if ($row = $result->fetch_assoc()) {
+            $id = $row['notificationId'];
+        }
+
+        return $id;
+    }
+
     // Insert notifications
     private function insertNotification($pos, $dep = '', $lastID)
     {
+        $info = '';
         $sql = "INSERT INTO system_notificationdetails (notificationDetail, notificationKey, notificationType)
         VALUES ('You have a leave application waiting for approval', '$lastID', '38')";
         $result = $this->connect()->query($sql);
 
         if ($result) {
 
-            $last_id = $this->connect()->insert_id;
+            $last_id = $this->notificationLastID();
 
             // If orange positions request a leave, run this query
 
@@ -122,10 +149,9 @@ class LeaveForm extends Database
                     $orangeResult = $this->connect()->query($insertOrange);
 
                     if ($orangeResult) {
-                        echo "1";
+                        $info = "1";
                     } else {
-                        echo "2";
-                        exit();
+                        $info = "2";
                     }
                 }
             } else {
@@ -154,10 +180,9 @@ class LeaveForm extends Database
                         $yellowResult = $this->connect()->query($insertYellow);
 
                         if ($yellowResult) {
-                            echo "1";
+                            $info = "1";
                         } else {
-                            echo "2";
-                            exit();
+                            $info = "2";
                         }
                     }
                 } else {
@@ -181,28 +206,36 @@ class LeaveForm extends Database
                             $higherResult = $this->connect()->query($insertHigher);
 
                             if ($higherResult) {
-                                echo "1";
+                                $info = "1";
                             } else {
-                                echo "2";
-                                exit();
+                                $info = "2";
                             }
                         }
                     } else {
-                        echo "2";
-                        exit();
+                        $info = "2";
                     }
                 }
             }
         } else {
-            echo "2";
-            exit();
+            $info = "2";
         }
+
+        return $info;
     }
 
     // Insert Leave inside Database
     public function insertLeave($id, $from, $to, $purpose)
     {
         $users = $this->getUser($id);
+
+        // Convert the signature base64 to image
+        // $signature = base64_decode($signature);
+        // $signature = imagecreatefromstring($signature);
+        // $signature = imagejpeg($signature, 'assets/images/uploads/' . $id . '.jpg');
+
+        // Move the signature to the assets folder
+        // $signature = 'assets/images/uploads/' . $id . '.jpg';
+
 
         foreach ($users as $key => $user) {
             $userFirstName = $user['firstName'];
@@ -231,9 +264,14 @@ class LeaveForm extends Database
 
         if ($result) {
 
-            $lastId = $this->connect()->insert_id;
+            $lastId = $this->leaveFormLastId();
 
-            $this->insertNotification($positionName, $departmentId, $lastId);
+            if ($this->insertNotification($positionName, $departmentId, $lastId) == "1") {
+                echo "1";
+            } else {
+                echo "2";
+                exit();
+            }
         } else {
             echo "2";
             exit();

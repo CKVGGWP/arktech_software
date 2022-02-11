@@ -13,7 +13,7 @@ $(document).ready(function () {
           altInput: true,
           altFormat: "F j, Y",
           dateFormat: "Y-m-d",
-          minDate: "today",
+          minDate: new Date().fp_incr(1),
           disable: parsed,
           locale: {
             firstDayOfWeek: 1, // start week on Monday
@@ -23,6 +23,19 @@ $(document).ready(function () {
     });
   }
 
+  //   $("#sig").signature();
+
+  //   let sig = $("#sig").signature({
+  //     syncField: "#signature",
+  //     syncFormat: "PNG",
+  //   });
+
+  //   $("#clearSig").on("click", function (e) {
+  //     e.preventDefault();
+  //     sig.signature("clear");
+  //     $("#signature").val("");
+  //   });
+
   $("#leaveForm").on("submit", function (e) {
     e.preventDefault();
 
@@ -30,6 +43,7 @@ $(document).ready(function () {
     let leaveFrom = $("#leaveFrom").val();
     let leaveTo = $("#leaveTo").val();
     let purpose = $("#purpose").val();
+    // let signature = $("#sig").signature("toJSON");
 
     if (leaveFrom == "") {
       Swal.fire({
@@ -65,6 +79,7 @@ $(document).ready(function () {
           leaveFrom: leaveFrom,
           leaveTo: leaveTo,
           purpose: purpose,
+          // signature: signature,
         },
         beforeSend: function () {
           $("#blur").addClass("blur-active");

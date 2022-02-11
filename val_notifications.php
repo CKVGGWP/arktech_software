@@ -6,7 +6,12 @@
 
     <?php include('views/includes/head/head.php'); ?>
     <?php include('controllers/ck_emptySession.php'); ?>
-
+    <!-- DIASABLE METHOD-->
+    <style>
+        div.dataTables_paginate {
+            display: none;
+        }
+    </style>
 
     <!-- End of Head -->
 </head>

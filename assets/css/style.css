@@ -4,6 +4,10 @@
     margin: 0;
 }
 
+textarea {
+    resize: none;
+}
+
 .blur-active::before {
     content: '';
     position: fixed;
@@ -21,4 +25,9 @@
     top: 30%;
     transform: translate(-50%, -50%);
     z-index: 999999;
+}
+
+.kbw-signature {
+    height: 120px;
+    width: 100%;
 }

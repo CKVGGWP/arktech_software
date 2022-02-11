@@ -5,6 +5,7 @@
 
 <?php include('views/includes/head/head.php'); ?>
 <link rel="stylesheet" href="assets/css/flatpickr.min.css">
+<link rel="stylesheet" href="assets/css/jquery.signature.css">
 <?php include('controllers/ck_emptySession.php'); ?>
 
 
@@ -38,6 +39,7 @@
     <?php include('views/includes/footer/footer.php'); ?>
     <script src="assets/js/flatpickr.min.js"></script>
     <script src="assets/js/ck_leaveForm.js"></script>
+    <script src="assets/js/jquery.signature.min.js"></script>
 
     <!-- End of Footer -->
 </body>
