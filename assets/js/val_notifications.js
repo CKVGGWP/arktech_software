@@ -80,7 +80,7 @@ $(document).on("click", "#approve", function () {
           text: "Leave Approved!",
           icon: "success",
         }).then((result) => {
-          $("#userTable").DataTable().ajax.reload();
+          location.reload();
         });
       },
     });
@@ -110,7 +110,7 @@ $(document).on("click", "#disapprove", function () {
           text: "Leave Disapproved!",
           icon: "success",
         }).then((result) => {
-          $("#userTable").DataTable().ajax.reload();
+          location.reload();
         });
       },
     });

@@ -10,6 +10,12 @@ class LeaveForm extends Database
         "Manager / Safety Officer"
     );
 
+    // Blue and Green Position Array
+    private $bluePositions = array(
+        "Deputy Factory Manager/PCO", "Factory Manager",
+        "President"
+    );
+
     // Get Holiday
     public function holidays()
     {
@@ -38,10 +44,21 @@ class LeaveForm extends Database
         return $users;
     }
 
-    // If check if position is inside array
+    // Check if position is inside array
     private function checkString($position)
     {
         if (in_array($position, $this->orangePositions)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    // Check if position is a blue position
+
+    private function checkBluePosition($position)
+    {
+        if (in_array($position, $this->bluePositions)) {
             return true;
         } else {
             return false;
@@ -149,6 +166,33 @@ class LeaveForm extends Database
                     $orangeResult = $this->connect()->query($insertOrange);
 
                     if ($orangeResult) {
+                        $info = "1";
+                    } else {
+                        $info = "2";
+                    }
+                }
+            } else if ($this->checkBluePosition($pos)) {
+
+                // If blue and green positions request a leave, run this query
+
+                $bluePos = "SELECT 
+                        t.idNumber, 
+                        t.firstName, 
+                        p.positionName 
+                        FROM hr_employee t 
+                        LEFT JOIN hr_positions p ON t.position = p.positionId 
+                        WHERE p.positionName 
+                        LIKE '%president%'";
+                $blueQuery = $this->connect()->query($bluePos);
+
+                while ($blueRow = $blueQuery->fetch_assoc()) {
+                    $blueId = $blueRow['idNumber'];
+                    $insertBlue = "INSERT INTO system_notification 
+                    (notificationId, notificationTarget, notificationStatus, targetType)
+                    VALUES ('$last_id', '$blueId', '0', '2')";
+                    $blueResult = $this->connect()->query($insertBlue);
+
+                    if ($blueResult) {
                         $info = "1";
                     } else {
                         $info = "2";
