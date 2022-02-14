@@ -1,11 +1,10 @@
-<?php include('controllers/val_checkLeaveStatus.php');
-?>
 <main class="container">
-    <div class="d-flex justify-content-center">
+    <div class="d-flex flex-column justify-content-center">
         <!------------------- DataTables Example ----------------->
         <div class="card shadow mb-4">
             <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary">Check Leave Status</h6>
+                <a class="btn btn-outline-success" href="ck_leaveForm.php" role="button"><i class="fa-solid fa-angle-left"></i> Back</a>
+                <h4 class="m-0 font-weight-bold text-dark text-center">Check Leave Status</h4>
             </div>
             <div class="card-body">
 
@@ -19,25 +18,29 @@
                     </div>
                 </div>
                 <div class="table-responsive">
-                    <table class="table table-bordered" id="userTable" width="100%" cellspacing="0">
+                    <table class="table table-bordered text-center" id="userTable" width="100%" cellspacing="0">
                         <thead>
                             <tr>
                                 <th>Date Issued</th>
-                                <th>Employee No.</th>
+                                <!-- <th>Employee No.</th> -->
                                 <th>Name</th>
-                                <th>Designation</th>
-                                <th>Department</th>
+                                <!-- <th>Designation</th>
+                                <th>Department</th> -->
                                 <th>Purpose</th>
                                 <th>Leave From</th>
                                 <th>Leave To</th>
-                                <th>Status</th>
                                 <th>Reason of Superior</th>
                                 <th>Date</th>
-                                <th>Approved / Denied by Superior</th>
+                                <th>HR Leave Remarks</th>
+                                <th>HR Leave Type</th>
+                                <th>HR Status</th>
+                                <th>Transportation Allowance</th>
+                                <th>Status</th>
+                                <!-- <th>Approved / Denied by Superior</th>
                                 <th>Approved / Denied by Leader</th>
                                 <th>Date Approved / Denied by Leader</th>
                                 <th>Date Approved / Denied by Superior</th>
-                                <th>LeaderApproval Flag</th>
+                                <th>LeaderApproval Flag</th> -->
                             </tr>
                         </thead>
                         <tbody>

@@ -25,3 +25,15 @@ if (isset($_POST['disapprove'])) {
 
     $notifications->leaveFormApproval($listId, $status, $disapproval);
 }
+
+if (isset($_POST['setStatus'])) {
+    $leaveType = $_POST['leaveType'];
+    $leaveRemarks = $_POST['leaveRemarks'];
+    $status = $_POST['status'];
+    $type = $_POST['type'];
+    $transpoAllowance = $_POST['transpoAllowance'];
+    $quarantine = $_POST['quarantine'];
+    $newEmpNum = $_POST['newEmpNum'];
+
+    $notifications->updateHR($leaveType, $leaveRemarks, $status, $type, $transpoAllowance, $quarantine, $newEmpNum);
+}

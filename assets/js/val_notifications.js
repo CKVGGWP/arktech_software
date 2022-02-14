@@ -116,3 +116,71 @@ $(document).on("click", "#disapprove", function () {
     });
   }
 });
+
+$(document).on("click", ".hr", function () {
+  let empNum = $(this).data("employee").employeeNumber;
+  let empName = $(this).data("employee").employeeName;
+  let des = $(this).data("employee").designation;
+  let dept = $(this).data("employee").department;
+  let purpose = $(this).data("employee").purposeOfLeave;
+  let from = $(this).data("employee").leaveFrom;
+  let to = $(this).data("employee").leaveTo;
+  let list = $(this).data("employee").listId;
+  let reason = $(this).data("employee").reasonOfSuperior;
+  let date = $(this).data("employee").date;
+
+  $("#empNum").val(empNum);
+  $("#empName").val(empName);
+  $("#des").val(des);
+  $("#dept").val(dept);
+  $("#purpose").val(purpose);
+  $("#from").val(from);
+  $("#to").val(to);
+  $("#list").val(list);
+  $("#reason").val(reason);
+  $("#dateOfApproval").val(date);
+
+  $(".titleName").text(empName + " Leave Details");
+});
+
+$(document).on("click", "#setStatusBTN", function () {
+  let leaveType = $("#leaveType").val();
+  let leaveRemarks = $("#leaveRemarks").val();
+  let status = $("#status").val();
+  let type = $("#type").val();
+  let transpoAllowance = $("#transpoAllowance").val();
+  let quarantine = $("#quarantine").val();
+  let newEmpNum = $("#empNum").val();
+
+  if (leaveRemarks == "") {
+    $("#leaveRemarks").addClass("is-invalid");
+    $("#leaveRemarks").focus();
+    return false;
+  } else if (leaveRemarks != "") {
+    $("#leaveRemarks").removeClass("is-invalid");
+  } else {
+    $.ajax({
+      url: "controllers/ck_newNotificationController.php",
+      type: "POST",
+      data: {
+        setStatus: 1,
+        leaveType: leaveType,
+        leaveRemarks: leaveRemarks,
+        status: status,
+        type: type,
+        transpoAllowance: transpoAllowance,
+        quarantine: quarantine,
+        newEmpNum: newEmpNum,
+      },
+      success: function (response) {
+        Swal.fire({
+          title: "Success",
+          text: "Leave Status has been set!",
+          icon: "success",
+        }).then((result) => {
+          location.reload();
+        });
+      },
+    });
+  }
+});

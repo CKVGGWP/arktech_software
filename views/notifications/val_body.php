@@ -143,4 +143,136 @@
             </div>
         </div>
     </div>
+
+    <!-- View HR Modal -->
+    <div class="modal fade" id="viewHRModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title titleName" id="staticBackdropLabel"></h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="viewDetails">
+                    <div class="form-group mb-2 row">
+                        <div class="col-md-6">
+                            <label class="col-sm-5">Employee No.</label>
+                            <input readonly class="form-control" id="empNum" name="empNum" val></input>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="col-sm-5">Employee Name</label>
+                            <input readonly class="form-control" id="empName" name="empName"></input>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 mb-sm-0 mb-1" hidden>
+                        <div class="row">
+                            <label class="col-sm-5">List ID</label>
+                            <input readonly class="form-control" id="list" name="list"></input>
+                        </div>
+                    </div>
+                    <div class="form-group mb-2 row">
+                        <div class="col-md-6">
+                            <label class="col-sm-5">Designation</label>
+                            <input readonly class="form-control" id="des" name="des"></input>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="col-sm-5">Department</label>
+                            <input readonly class="form-control" id="dept" name="dept"></input>
+                        </div>
+                    </div>
+                    <div class="form-group mb-2">
+                        <div class="col-md-12 mb-sm-0 mb-1">
+                            <div>
+                                <label class="col-sm-5">Purpose of Leave</label>
+                                <textarea readonly class="form-control" id="purpose" name="purpose"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group mb-2 row">
+                        <div class="col-md-6">
+                            <label class="col-sm-5">Leave From:</label>
+                            <input readonly class="form-control" id="from" name="from"></input>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="col-sm-5">Leave To:</label>
+                            <input readonly class="form-control" id="to" name="to"></input>
+                        </div>
+                    </div>
+                    <div class="form-group mb-2">
+                        <div class="col-md-12 mb-sm-0 mb-1">
+                            <div>
+                                <label class="col-sm-6">Reason of Superior</label>
+                                <textarea readonly class="form-control" id="reasonOfApproval" name="reasonOfApproval" rows="3"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group mb-2">
+                        <div class="col-md-12 mb-sm-0 mb-1">
+                            <div>
+                                <label class="col-sm-6">Date of Approval</label>
+                                <input readonly class="form-control" id="dateOfApproval" name="dateOfApproval">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group mb-2">
+                        <div class="col-md-12 mb-sm-0 mb-1">
+                            <div>
+                                <label class="col-sm-5">Leave Type</label>
+                                <select name="leaveType" id="leaveType" class="form-control">
+                                    <option value="">Whole Day</option>
+                                    <option value="0.5">Half Day</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group mb-2">
+                        <div class="col-md-12 mb-sm-0 mb-1">
+                            <div>
+                                <label class="col-sm-5">Leave Remarks</label>
+                                <textarea class="form-control" id="leaveRemarks" name="leaveRemarks"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group mb-2 row">
+                        <div class="col-md-6">
+                            <label class="col-sm-5">Status</label>
+                            <select name="status" id="status" class="form-control">
+                                <option value="1">With Pay</option>
+                                <option value="0">Without Pay</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="col-sm-5">Type</label>
+                            <select name="type" id="type" class="form-control">
+                                <option value="0">Sick Leave</option>
+                                <option value="1">Vacation Leave</option>
+                                <option value="2">Bereavement Leave</option>
+                                <option value="3">Maternity Leave</option>
+                                <option value="4">Emergency Leave</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group mb-2 row">
+                        <div class="col-md-6">
+                            <label class="col-sm-12">Trasportation Allowance (if any)</label>
+                            <select name="transpoAllowance" id="transpoAllowance" class="form-control">
+                                <option value="1">Yes</option>
+                                <option value="0">No</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="col-sm-5">Quarantine Flag</label>
+                            <select name="quarantine" id="quarantine" class="form-control">
+                                <option value="0">Default</option>
+                                <option value="1">Due to Covid-19</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="setStatusBTN">Set Status</button>
+                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </main>
