@@ -30,7 +30,7 @@
                                 <th>Leave From</th>
                                 <th>Leave To</th>
                                 <th>Reason of Superior</th>
-                                <th>Date</th>
+                                <th>Date of Head Approval</th>
                                 <th>HR Leave Remarks</th>
                                 <th>HR Leave Type</th>
                                 <th>HR Status</th>

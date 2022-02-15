@@ -230,8 +230,9 @@ class Notifications extends Database
         $sql = "UPDATE hr_leave h
                 LEFT JOIN system_leaveform s ON s.employeeNumber = h.employeeId
                 SET h.leaveType = '$leaveType', h.leaveRemarks = '$leaveRemarks', h.status = '$status', 
-                h.type = '$type', h.transpoAllowance = '$transpoAllowance', h.quarantineFlag = '$quarantine' 
-                WHERE h.employeeId = '$empId' AND h.leaveType = ''";
+                h.type = '$type', h.transpoAllowance = '$transpoAllowance', h.quarantineFlag = '$quarantine',
+                s.status = '3' 
+                WHERE h.employeeId = '$empId' AND h.leaveRemarks = ''";
         $query = $this->connect()->query($sql);
 
         if ($query) {
@@ -239,5 +240,18 @@ class Notifications extends Database
         } else {
             return false;
         }
+    }
+
+    public function getNotificationType()
+    {
+        $sql = "SELECT 
+        notificationName, 
+        COUNT(notificationId) AS typeCount
+        FROM system_notificationdetails
+        LEFT JOIN system_notificationtype ON listId = notificationType
+        GROUP BY notificationName";
+        $query = $this->connect()->query($sql);
+
+        return $query;
     }
 }

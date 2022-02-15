@@ -10,6 +10,21 @@
             <div class="card-header py-3 text-center">
                 <h6 class="m-0 font-weight-bold text-primary">You have <?php echo $notifCount; ?> Notification(s)</h6>
             </div>
+            <?php if (!empty($notificationType)) : ?>
+                <?php if (mysqli_num_rows($notificationType) > 0) : ?>
+                    <div class="card-header py-3 text-center">
+                        <div class="slider-area">
+                            <div class="container">
+                                <div class="slider-list multiple-slides">
+                                    <?php while ($row = mysqli_fetch_assoc($notificationType)) : ?>
+                                        <button class="btn btn-outline-success mx-3"> <?php echo $row['notificationName']; ?> <br> <?php echo $row['typeCount']; ?> </button>
+                                    <?php endwhile; ?>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <?php endif; ?>
+            <?php endif; ?>
             <div class="card-body">
                 <div class="table-responsive">
                     <table class="table table-bordered text-center" id="userTable" width="100%" cellspacing="0">

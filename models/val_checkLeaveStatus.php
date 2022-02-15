@@ -47,16 +47,20 @@ class LeaveStatus extends Database
         if ($sql->num_rows > 0) {
             while ($result = $sql->fetch_assoc()) {
                 extract($result);
-                if ($status == 0 && $reasonOfSuperior == "") {
+
+                $headApproval = false;
+
+                if ($status == 0) {
                     $status = "For Head Approval";
-                } else if ($status == 2 && $reasonOfSuperior != "") {
-                    $status = "Approved by Head";
+                } else if ($status == 2 && $reasonOfSuperior != "" && $headApproval == false) {
+                    $status = "Approved By Head";
+                    $headApproval = true;
                 } else if ($status == 4) {
                     $status = "Disapproved by Head";
-                } else if ($leaveRemarks == "" && $status == 2 && $reasonOfSuperior != "") {
+                } else if ($headApproval == true) {
                     $status = "For HR Approval";
-                } else if ($leaveRemarks != "") {
-                    $status = "Approved by HR";
+                } else if ($status == 3) {
+                    $status = "Approved";
                 }
 
 
@@ -65,6 +69,7 @@ class LeaveStatus extends Database
                 } else {
                     $leaveType = "Half Day";
                 }
+
 
                 if ($transpoAllowance == "1") {
                     $transpoAllowance = "Yes";
@@ -79,17 +84,17 @@ class LeaveStatus extends Database
                 }
 
                 $data[] = [
-                    $dateIssued,
+                    date("F j, Y", strtotime($dateIssued)),
                     $employeeName,
                     $purposeOfLeave,
-                    $leaveFrom,
-                    $leaveTo,
+                    date("F j, Y", strtotime($leaveFrom)),
+                    date("F j, Y", strtotime($leaveTo)),
                     $reasonOfSuperior,
-                    $date,
+                    ($date == "0000-00-00") ? "" : date("F j, Y", strtotime($date)),
                     $leaveRemarks,
-                    $leaveType,
-                    $statusOfHR,
-                    $transpoAllowance,
+                    ($status == "Approved") ? $leaveType : "",
+                    ($status == "Approved") ? $statusOfHR : "",
+                    ($status == "Approved") ? $transpoAllowance : "",
                     $status,
                 ];
                 $totalData++;

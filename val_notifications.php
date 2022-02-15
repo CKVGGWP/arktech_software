@@ -6,6 +6,8 @@
 
     <?php include('views/includes/head/head.php'); ?>
     <?php include('controllers/ck_emptySession.php'); ?>
+    <link rel="stylesheet" href="assets/css/slick.css">
+    <script src="assets/js/slick.min.js"></script>
     <!-- DIASABLE METHOD-->
     <style>
         div.dataTables_paginate {
