@@ -4,10 +4,7 @@ class LeaveStatus extends Database
 {
     public function getTable($id)
     {
-        $query = '';
-
-        if ($this->getPosition() == 'HR Staff') {
-            $query .= "SELECT 
+        $query = "SELECT 
                 s.dateIssued, 
                 s.employeeName, 
                 s.purposeOfLeave, 
@@ -22,24 +19,12 @@ class LeaveStatus extends Database
                 h.transpoAllowance 
                 FROM system_leaveform s 
                 LEFT JOIN hr_leave h ON h.employeeId = s.employeeNumber";
-        } else {
-            $query .= "SELECT 
-                s.dateIssued, 
-                s.employeeName, 
-                s.purposeOfLeave, 
-                s.leaveFrom, 
-                s.leaveTo, 
-                s.status, 
-                s.reasonOfSuperior, 
-                s.date, 
-                h.leaveRemarks, 
-                h.leaveType,
-                h.status AS hrStatus, 
-                h.transpoAllowance 
-                FROM system_leaveform s 
-                LEFT JOIN hr_leave h ON h.employeeId = s.employeeNumber 
-                WHERE employeeNumber = '$id'";
+
+        if ($this->getPosition() != 'HR Staff') {
+            $query .= " WHERE employeeNumber = '$id'";
         }
+
+        $query .= " GROUP BY h.leaveId";
 
         $sql = $this->connect()->query($query);
         $data = [];
@@ -56,7 +41,7 @@ class LeaveStatus extends Database
                     $status = "Approved By Head";
                     $headApproval = true;
                 } else if ($status == 4) {
-                    $status = "Disapproved by Head";
+                    $status = "Disapproved";
                 } else if ($headApproval == true) {
                     $status = "For HR Approval";
                 } else if ($status == 3) {

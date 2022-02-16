@@ -225,13 +225,13 @@ class Notifications extends Database
         }
     }
 
-    public function updateHR($leaveType, $leaveRemarks, $status, $type, $transpoAllowance, $quarantine, $empId)
+    public function updateHR($decision, $leaveType, $leaveRemarks, $status, $type, $transpoAllowance, $quarantine, $empId)
     {
         $sql = "UPDATE hr_leave h
                 LEFT JOIN system_leaveform s ON s.employeeNumber = h.employeeId
                 SET h.leaveType = '$leaveType', h.leaveRemarks = '$leaveRemarks', h.status = '$status', 
                 h.type = '$type', h.transpoAllowance = '$transpoAllowance', h.quarantineFlag = '$quarantine',
-                s.status = '3' 
+                s.status = '$decision' 
                 WHERE h.employeeId = '$empId' AND h.leaveRemarks = ''";
         $query = $this->connect()->query($sql);
 

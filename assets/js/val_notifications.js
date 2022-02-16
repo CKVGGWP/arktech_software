@@ -53,15 +53,39 @@ $(document).on("click", ".employees", function () {
   $("#listId").val(listId);
 });
 
-$(document).on("click", "#approve", function () {
+$("#decisionOfHead").on("change", function () {
+  let des = $(this).val();
+
+  if (des == "approve") {
+    $("#approvalHead").removeClass("d-none");
+    $("#disapprovalHead").addClass("d-none");
+  } else if (des == "disapprove") {
+    $("#approvalHead").addClass("d-none");
+    $("#disapprovalHead").removeClass("d-none");
+  } else {
+    $("#approvalHead").addClass("d-none");
+    $("#disapprovalHead").addClass("d-none");
+  }
+});
+
+$(document).on("click", "#submitApproval", function () {
   let listId = $("#listId").val();
-  let reasonForApproval = $("#reasonForApproval").val();
   let leaveFrom = $("#leaveFrom").val();
   let leaveTo = $("#leaveTo").val();
+  let decisionOfHead = $("#decisionOfHead").val();
+  let headRemark = "";
 
-  if (reasonForApproval == "") {
-    $("#reasonForApproval").addClass("is-invalid");
-    $("#reasonForApproval").focus();
+  if (decisionOfHead == "approve") {
+    let approvalHeadRemarks = $("#approvalHeadRemarks").val();
+    headRemark = approvalHeadRemarks;
+  } else {
+    let disapprovalHeadRemarks = $("#disapprovalHeadRemarks").val();
+    headRemark = disapprovalHeadRemarks;
+  }
+
+  if (headRemark == "") {
+    $("#remarkHeadClass").addClass("is-invalid");
+    $("#remarkHeadClass").focus();
     return false;
   } else {
     $.ajax({
@@ -70,44 +94,15 @@ $(document).on("click", "#approve", function () {
       data: {
         approve: 1,
         listId: listId,
-        reasonForApproval: reasonForApproval,
+        decisionOfHead: decisionOfHead,
+        headRemark: headRemark,
         leaveFrom: leaveFrom,
         leaveTo: leaveTo,
       },
       success: function (response) {
         Swal.fire({
           title: "Success",
-          text: "Leave Approved!",
-          icon: "success",
-        }).then((result) => {
-          location.reload();
-        });
-      },
-    });
-  }
-});
-
-$(document).on("click", "#disapprove", function () {
-  let listId = $("#listId").val();
-  let reasonForDisapproval = $("#reasonForDisapproval").val();
-
-  if (reasonForDisapproval == "") {
-    $("#reasonForDisapproval").addClass("is-invalid");
-    $("#reasonForDisapproval").focus();
-    return false;
-  } else {
-    $.ajax({
-      url: "controllers/ck_newNotificationController.php",
-      type: "POST",
-      data: {
-        disapprove: 1,
-        listId: listId,
-        reasonForDisapproval: reasonForDisapproval,
-      },
-      success: function (response) {
-        Swal.fire({
-          title: "Success",
-          text: "Leave Disapproved!",
+          text: "Leave Has Been Set!",
           icon: "success",
         }).then((result) => {
           location.reload();
@@ -143,29 +138,55 @@ $(document).on("click", ".hr", function () {
   $(".titleName").text(empName + " Leave Details");
 });
 
-$(document).on("click", "#setStatusBTN", function () {
-  let leaveType = $("#leaveType").val();
-  let leaveRemarks = $("#leaveRemarks").val();
-  let status = $("#status").val();
-  let type = $("#type").val();
-  let transpoAllowance = $("#transpoAllowance").val();
-  let quarantine = $("#quarantine").val();
-  let newEmpNum = $("#empNum").val();
+$(document).on("change", "#decision", function () {
+  let decision = $(this).val();
 
-  if (leaveRemarks == "") {
-    $("#leaveRemarks").addClass("is-invalid");
-    $("#leaveRemarks").focus();
+  if (decision == 3) {
+    $("#approvalHR").removeClass("d-none");
+    $("#disapprovalHR").addClass("d-none");
+  } else if (decision == 4) {
+    $("#approvalHR").addClass("d-none");
+    $("#disapprovalHR").removeClass("d-none");
+  } else {
+    $("#approvalHR").addClass("d-none");
+    $("#disapprovalHR").addClass("d-none");
+  }
+});
+
+$(document).on("click", "#setStatusBTN", function () {
+  let leaveType = $("#leaveType").val() ? $("#leaveType").val() : "";
+  let status = $("#status").val() ? $("#status").val() : "";
+  let type = $("#type").val() ? $("#type").val() : "";
+  let transpoAllowance = $("#transpoAllowance").val()
+    ? $("#transpoAllowance").val()
+    : "";
+  let quarantine = $("#quarantine").val() ? $("#quarantine").val() : "";
+  let newEmpNum = $("#empNum").val();
+  let decision = $("#decision").val();
+
+  let remarks = "";
+
+  if (decision == 3) {
+    let leaveRemarks = $("#leaveRemarks").val();
+    remarks = leaveRemarks;
+  } else {
+    let disapprovalRemarks = $("#disapprovalRemarks").val();
+    remarks = disapprovalRemarks;
+  }
+
+  if (remarks == "") {
+    $(".remarkClass").addClass("is-invalid");
+    $(".remarkClass").focus();
     return false;
-  } else if (leaveRemarks != "") {
-    $("#leaveRemarks").removeClass("is-invalid");
   } else {
     $.ajax({
       url: "controllers/ck_newNotificationController.php",
       type: "POST",
       data: {
         setStatus: 1,
+        decision: decision,
         leaveType: leaveType,
-        leaveRemarks: leaveRemarks,
+        remarks: remarks,
         status: status,
         type: type,
         transpoAllowance: transpoAllowance,

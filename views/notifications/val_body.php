@@ -98,61 +98,41 @@
                             <input readonly class="form-control" id="leaveTo" name="leaveTo"></input>
                         </div>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#approveModal">Approve</button>
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal" data-bs-toggle="modal" data-bs-target="#disapproveModal">Disapprove</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Approve Modal -->
-    <div class="modal fade" id="approveModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabel">Approve Leave</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
                     <div class="form-group mb-2">
                         <div class="col-md-12 mb-sm-0 mb-1">
                             <div>
-                                <label class="col-sm-5">Reason for Approval: </label>
-                                <textarea class="form-control" id="reasonForApproval" name="reasonForApproval" rows="5"></textarea>
+                                <label class="col-sm-5">Approve Leave?</label>
+                                <select class="form-control" id="decisionOfHead" name="decisionOfHead">
+                                    <option>Select Decision</option>
+                                    <option value="approve">Yes</option>
+                                    <option value="disapprove">No</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="approvalHead" class="d-none">
+                        <div class="form-group mb-2">
+                            <div class="col-md-12 mb-sm-0 mb-1">
+                                <div>
+                                    <label class="col-sm-5">Reason for Approval</label>
+                                    <textarea class="form-control remarkHeadClass" id="approvalHeadRemarks" name="approvalHeadRemarks"></textarea>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="disapprovalHead" class="d-none">
+                        <div class="form-group mb-2">
+                            <div class="col-md-12 mb-sm-0 mb-1">
+                                <div>
+                                    <label class="col-sm-5">Reason for Disapproval</label>
+                                    <textarea class="form-control remarkHeadClass" id="disapprovalHeadRemarks" name="disapprovalHeadRemarks"></textarea>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" id="approve">Approve</button>
-                    <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Disapprove Modal -->
-    <div class="modal fade" id="disapproveModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="staticBackdropLabel">Disapprove Leave</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="form-group mb-2">
-                        <div class="col-md-12 mb-sm-0 mb-1">
-                            <div>
-                                <label class="col-sm-5">Reason for Disapproval: </label>
-                                <textarea class="form-control" id="reasonForDisapproval" name="reasonForDisapproval" rows="5"></textarea>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary" id="disapprove">Disapprove</button>
+                    <button type="button" class="btn btn-primary" id="submitApproval">Submit</button>
                     <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cancel</button>
                 </div>
             </div>
@@ -231,55 +211,79 @@
                     <div class="form-group mb-2">
                         <div class="col-md-12 mb-sm-0 mb-1">
                             <div>
-                                <label class="col-sm-5">Leave Type</label>
-                                <select name="leaveType" id="leaveType" class="form-control">
-                                    <option value="">Whole Day</option>
-                                    <option value="0.5">Half Day</option>
+                                <label class="col-sm-6">Approve Leave?</label>
+                                <select class="form-control" id="decision" name="decision">
+                                    <option>Choose Decision</option>
+                                    <option value="3">Yes</option>
+                                    <option value="4">No</option>
                                 </select>
                             </div>
                         </div>
                     </div>
-                    <div class="form-group mb-2">
-                        <div class="col-md-12 mb-sm-0 mb-1">
-                            <div>
-                                <label class="col-sm-5">Leave Remarks</label>
-                                <textarea class="form-control" id="leaveRemarks" name="leaveRemarks"></textarea>
+                    <div id="disapprovalHR" class="d-none">
+                        <div class="form-group mb-2">
+                            <div class="col-md-12 mb-sm-0 mb-1">
+                                <div>
+                                    <label class="col-sm-5">Reason for Disapproval</label>
+                                    <textarea class="form-control remarkClass" id="disapprovalRemarks" name="disapprovalRemarks"></textarea>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="form-group mb-2 row">
-                        <div class="col-md-6">
-                            <label class="col-sm-5">Status</label>
-                            <select name="status" id="status" class="form-control">
-                                <option value="1">With Pay</option>
-                                <option value="0">Without Pay</option>
-                            </select>
+                    <div id="approvalHR" class="d-none">
+                        <div class="form-group mb-2">
+                            <div class="col-md-12 mb-sm-0 mb-1">
+                                <div>
+                                    <label class="col-sm-5">Leave Type</label>
+                                    <select name="leaveType" id="leaveType" class="form-control">
+                                        <option value="">Whole Day</option>
+                                        <option value="0.5">Half Day</option>
+                                    </select>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-md-6">
-                            <label class="col-sm-5">Type</label>
-                            <select name="type" id="type" class="form-control">
-                                <option value="0">Sick Leave</option>
-                                <option value="1">Vacation Leave</option>
-                                <option value="2">Bereavement Leave</option>
-                                <option value="3">Maternity Leave</option>
-                                <option value="4">Emergency Leave</option>
-                            </select>
+                        <div class="form-group mb-2">
+                            <div class="col-md-12 mb-sm-0 mb-1">
+                                <div>
+                                    <label class="col-sm-5">Leave Remarks</label>
+                                    <textarea class="form-control remarkClass" id="leaveRemarks" name="leaveRemarks"></textarea>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                    <div class="form-group mb-2 row">
-                        <div class="col-md-6">
-                            <label class="col-sm-12">Trasportation Allowance (if any)</label>
-                            <select name="transpoAllowance" id="transpoAllowance" class="form-control">
-                                <option value="1">Yes</option>
-                                <option value="0">No</option>
-                            </select>
+                        <div class="form-group mb-2 row">
+                            <div class="col-md-6">
+                                <label class="col-sm-5">Status</label>
+                                <select name="status" id="status" class="form-control">
+                                    <option value="1">With Pay</option>
+                                    <option value="0">Without Pay</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="col-sm-5">Type</label>
+                                <select name="type" id="type" class="form-control">
+                                    <option value="0">Sick Leave</option>
+                                    <option value="1">Vacation Leave</option>
+                                    <option value="2">Bereavement Leave</option>
+                                    <option value="3">Maternity Leave</option>
+                                    <option value="4">Emergency Leave</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="col-md-6">
-                            <label class="col-sm-5">Quarantine Flag</label>
-                            <select name="quarantine" id="quarantine" class="form-control">
-                                <option value="0">Default</option>
-                                <option value="1">Due to Covid-19</option>
-                            </select>
+                        <div class="form-group mb-2 row">
+                            <div class="col-md-6">
+                                <label class="col-sm-12">Trasportation Allowance (if any)</label>
+                                <select name="transpoAllowance" id="transpoAllowance" class="form-control">
+                                    <option value="1">Yes</option>
+                                    <option value="0">No</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="col-sm-5">Quarantine Flag</label>
+                                <select name="quarantine" id="quarantine" class="form-control">
+                                    <option value="0">Default</option>
+                                    <option value="1">Due to Covid-19</option>
+                                </select>
+                            </div>
                         </div>
                     </div>
                 </div>
