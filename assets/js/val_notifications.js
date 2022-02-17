@@ -53,32 +53,39 @@ $(document).on("click", ".employees", function () {
   $("#listId").val(listId);
 });
 
+$(document).ready(function () {
+  $("#submitApproval").prop("disabled", true);
+
+  $("#setStatusBTN").prop("disabled", true);
+});
+
 $("#decisionOfHead").on("change", function () {
   let des = $(this).val();
 
   if (des == "approve") {
     $("#approvalHead").removeClass("d-none");
     $("#disapprovalHead").addClass("d-none");
+    $("#submitApproval").prop("disabled", false);
   } else if (des == "disapprove") {
     $("#approvalHead").addClass("d-none");
     $("#disapprovalHead").removeClass("d-none");
+    $("#submitApproval").prop("disabled", false);
   } else {
     $("#approvalHead").addClass("d-none");
     $("#disapprovalHead").addClass("d-none");
+    $("#submitApproval").prop("disabled", true);
   }
 });
 
 $(document).on("click", "#submitApproval", function () {
   let listId = $("#listId").val();
-  let leaveFrom = $("#leaveFrom").val();
-  let leaveTo = $("#leaveTo").val();
   let decisionOfHead = $("#decisionOfHead").val();
   let headRemark = "";
 
   if (decisionOfHead == "approve") {
     let approvalHeadRemarks = $("#approvalHeadRemarks").val();
     headRemark = approvalHeadRemarks;
-  } else {
+  } else if (decisionOfHead == "disapprove") {
     let disapprovalHeadRemarks = $("#disapprovalHeadRemarks").val();
     headRemark = disapprovalHeadRemarks;
   }
@@ -96,8 +103,6 @@ $(document).on("click", "#submitApproval", function () {
         listId: listId,
         decisionOfHead: decisionOfHead,
         headRemark: headRemark,
-        leaveFrom: leaveFrom,
-        leaveTo: leaveTo,
       },
       success: function (response) {
         Swal.fire({
@@ -144,12 +149,15 @@ $(document).on("change", "#decision", function () {
   if (decision == 3) {
     $("#approvalHR").removeClass("d-none");
     $("#disapprovalHR").addClass("d-none");
+    $("#setStatusBTN").prop("disabled", false);
   } else if (decision == 4) {
     $("#approvalHR").addClass("d-none");
     $("#disapprovalHR").removeClass("d-none");
+    $("#setStatusBTN").prop("disabled", false);
   } else {
     $("#approvalHR").addClass("d-none");
     $("#disapprovalHR").addClass("d-none");
+    $("#setStatusBTN").prop("disabled", true);
   }
 });
 
@@ -169,9 +177,12 @@ $(document).on("click", "#setStatusBTN", function () {
   if (decision == 3) {
     let leaveRemarks = $("#leaveRemarks").val();
     remarks = leaveRemarks;
-  } else {
+  } else if (decision == 4) {
     let disapprovalRemarks = $("#disapprovalRemarks").val();
     remarks = disapprovalRemarks;
+  } else {
+    $(this).prop("disabled", true);
+    return false;
   }
 
   if (remarks == "") {

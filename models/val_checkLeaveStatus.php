@@ -20,7 +20,7 @@ class LeaveStatus extends Database
                 FROM system_leaveform s 
                 LEFT JOIN hr_leave h ON h.employeeId = s.employeeNumber";
 
-        if ($this->getPosition() != 'HR Staff') {
+        if ($this->getPosition() != 'HR Staff' && $this->getPosition() != 'President') {
             $query .= " WHERE employeeNumber = '$id'";
         }
 

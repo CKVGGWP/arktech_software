@@ -69,13 +69,11 @@ class Notifications extends Database
                 l.leaveTo, 
                 l.listId, 
                 l.reasonOfSuperior, 
-                l.date, 
-                h.leaveType
+                l.date
                 FROM `system_notification` n 
                 JOIN system_notificationdetails d ON n.notificationId = d.notificationId
                 JOIN system_leaveform l ON d.notificationKey = l.listId
-                JOIN hr_leave h ON h.employeeId = l.employeeNumber
-                WHERE l.status = 2 AND h.leaveRemarks = '' 
+                WHERE l.status = 2
                 GROUP BY l.employeeNumber";
 
         $sql = $this->connect()->query($query);
@@ -125,12 +123,13 @@ class Notifications extends Database
 
     public function countNotification($position = '')
     {
+        $HRId = $this->getHRId();
         $sql = '';
 
-        if ($position == 'HR Staff') {
-            $sql .= "SELECT COUNT(leaveId) AS notifCount 
-                    FROM hr_leave 
-                    WHERE leaveRemarks = ''";
+        if ($position == 'HR') {
+            $sql .= "SELECT COUNT(listId) AS notifCount 
+                    FROM system_notification 
+                    WHERE notificationTarget = '$HRId' AND notificationStatus = 0";
         } else {
             $sql .= "SELECT COUNT(l.listId) AS notifCount 
                     FROM system_leaveform l 
@@ -155,7 +154,7 @@ class Notifications extends Database
         return $data;
     }
 
-    public function leaveFormApproval($id, $status, $remarks, $from = '', $to = '')
+    public function leaveFormApproval($id, $status, $remarks)
     {
         $sql = '';
         $data = '';
@@ -167,20 +166,16 @@ class Notifications extends Database
 
         $query = $this->connect()->query($sql);
 
-        $selectId = "SELECT employeeNumber FROM system_leaveform WHERE listId = '$id'";
-        $queryId = $this->connect()->query($selectId);
-
-        if ($queryId->num_rows > 0) {
-            while ($result = $queryId->fetch_assoc()) {
-                $employeeNumber = $result['employeeNumber'];
-            }
-        }
-
         if ($query) {
             if ($this->updateNotification($id)) {
                 if ($status == "approve") {
-                    if ($this->insertToHR($employeeNumber, $from, $to)) {
-                        $data = "1";
+                    if ($this->insertHRNotification()) {
+                        $keys = $this->lastNotificationId();
+                        if ($this->insertSystemNotificationHR($keys)) {
+                            $data = "1";
+                        } else {
+                            $data = "2";
+                        }
                     } else {
                         $data = "2";
                     }
@@ -195,6 +190,88 @@ class Notifications extends Database
         }
 
         return $data;
+    }
+
+    private function insertHRNotification()
+    {
+        $leaveId = $this->leaveFormId();
+
+        $link = "/V4/11-3 Employee Leave/controllers/ck_leaveFormController.php?leaveFormId=" . $leaveId;
+
+        $sql = "INSERT INTO system_notificationdetails 
+                (notificationDetail, notificationKey, notificationLink, notificationType)
+                VALUES('You have a leave application waiting for approval', '$leaveId', '$link', '38')";
+        $query = $this->connect()->query($sql);
+
+        if ($query) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private function leaveFormId()
+    {
+        $sql = "SELECT 
+                listId 
+                FROM system_leaveform 
+                ORDER BY listId DESC 
+                LIMIT 1";
+        $query = $this->connect()->query($sql);
+
+        if ($result = $query->fetch_assoc()) {
+            $id = $result['listId'];
+        }
+
+        return $id;
+    }
+
+    private function insertSystemNotificationHR($key)
+    {
+        $targetId = $this->getHRId();
+
+        $sql = "INSERT INTO system_notification
+                (notificationId, notificationTarget, targetType)
+                VALUES('$key', '$targetId', '2')";
+        $query = $this->connect()->query($sql);
+
+        if ($query) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private function lastNotificationId()
+    {
+        $sql = "SELECT 
+                notificationId 
+                FROM system_notificationdetails 
+                ORDER BY notificationId DESC 
+                LIMIT 1";
+        $query = $this->connect()->query($sql);
+
+        if ($result = $query->fetch_assoc()) {
+            $id = $result['notificationId'];
+        }
+
+        return $id;
+    }
+
+    private function getHRId()
+    {
+        $sql = "SELECT 
+                e.idNumber 
+                FROM hr_employee e
+                LEFT JOIN hr_positions p ON e.position = p.positionId
+                WHERE p.positionName = 'HR Staff'";
+        $query = $this->connect()->query($sql);
+
+        if ($result = $query->fetch_assoc()) {
+            $id = $result['idNumber'];
+        }
+
+        return $id;
     }
 
     private function updateNotification($id)
@@ -212,10 +289,11 @@ class Notifications extends Database
         }
     }
 
-    private function insertToHR($id, $from, $to)
+    private function insertToHR($id, $leaveType, $from, $to, $remarks, $status, $type, $allowance, $flag)
     {
-        $sql = "INSERT INTO hr_leave (employeeId, leaveDate, leaveDateUntil)
-                VALUES ('$id', '$from', '$to')";
+        $sql = "INSERT INTO hr_leave 
+                (employeeId, leaveType, leaveDate, leaveDateUntil, leaveRemarks, status, type, transpoAllowance, quarantineFlag)
+                VALUES ('$id', '$leaveType', '$from', '$to', '$remarks', '$status', '$type', '$allowance', '$flag')";
         $query = $this->connect()->query($sql);
 
         if ($query) {
@@ -225,18 +303,66 @@ class Notifications extends Database
         }
     }
 
-    public function updateHR($decision, $leaveType, $leaveRemarks, $status, $type, $transpoAllowance, $quarantine, $empId)
+    private function updateLeaveForm($decision, $id)
     {
-        $sql = "UPDATE hr_leave h
-                LEFT JOIN system_leaveform s ON s.employeeNumber = h.employeeId
-                SET h.leaveType = '$leaveType', h.leaveRemarks = '$leaveRemarks', h.status = '$status', 
-                h.type = '$type', h.transpoAllowance = '$transpoAllowance', h.quarantineFlag = '$quarantine',
-                s.status = '$decision' 
-                WHERE h.employeeId = '$empId' AND h.leaveRemarks = ''";
+        $sql = "UPDATE system_leaveform
+                SET status = '$decision'
+                WHERE employeeNumber = '$id'";
         $query = $this->connect()->query($sql);
 
         if ($query) {
             return true;
+        } else {
+            return false;
+        }
+    }
+
+    private function getLeaveDates()
+    {
+        $sql = "SELECT 
+                leaveFrom, 
+                leaveTo 
+                FROM system_leaveform 
+                ORDER BY listId DESC 
+                LIMIT 1";
+        $query = $this->connect()->query($sql);
+
+        $data = array();
+
+        while ($result = $query->fetch_assoc()) {
+            $data[] = $result;
+        }
+
+        return $data;
+    }
+
+    public function updateHR($decision, $leaveType, $leaveRemarks, $status, $type, $transpoAllowance, $quarantine, $empId)
+    {
+        $newKey = $this->leaveFormId();
+
+        $data = $this->getLeaveDates();
+
+        $from = $data[0]['leaveFrom'];
+        $to = $data[0]['leaveTo'];
+
+        if ($this->updateLeaveForm($decision, $empId)) {
+            if ($decision == 3) {
+                if ($this->insertToHR($empId, $leaveType, $from, $to, $leaveRemarks, $status, $type, $transpoAllowance, $quarantine)) {
+                    if ($this->updateNotification($newKey)) {
+                        return true;
+                    } else {
+                        return false;
+                    }
+                } else {
+                    return false;
+                }
+            } else {
+                if ($this->updateNotification($newKey)) {
+                    return true;
+                } else {
+                    return false;
+                }
+            }
         } else {
             return false;
         }

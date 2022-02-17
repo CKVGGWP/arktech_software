@@ -8,19 +8,9 @@ $notifications = new Notifications();
 if (isset($_POST['approve'])) {
     $listId = $_POST['listId'];
     $approval = $_POST['headRemark'];
-    $leaveFrom = isset($_POST['leaveFrom']) ? $_POST['leaveFrom'] : '';
-    $leaveTo = isset($_POST['leaveTo']) ? $_POST['leaveTo'] : '';
     $status = $_POST['decisionOfHead'];
 
-    if ($leaveFrom != '' && $leaveTo != '') {
-        $newLeaveFrom = date("Y-m-d", strtotime($leaveFrom));
-        $newLeaveTo = date("Y-m-d", strtotime($leaveTo));
-    } else {
-        $newLeaveFrom = '';
-        $newLeaveTo = '';
-    }
-
-    $notifications->leaveFormApproval($listId, $status, $approval, $newLeaveFrom, $newLeaveTo);
+    $notifications->leaveFormApproval($listId, $status, $approval);
 }
 
 if (isset($_POST['setStatus'])) {
