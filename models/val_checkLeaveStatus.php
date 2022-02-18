@@ -13,7 +13,7 @@ class LeaveStatus extends Database
                 s.status, 
                 s.reasonOfSuperior, 
                 s.date, 
-                h.leaveRemarks, 
+                s.hrRemarks, 
                 h.leaveType,
                 h.status AS hrStatus, 
                 h.transpoAllowance 
