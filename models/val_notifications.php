@@ -196,7 +196,7 @@ class Notifications extends Database
     {
         $leaveId = $this->leaveFormId();
 
-        $link = "/V4/11-3 Employee Leave/controllers/ck_leaveFormController.php?leaveFormId=" . $leaveId;
+        $link = "/V4/11-3 Employee Leave/controllers/ck_newNotificationController.php?leaveFormId=" . $leaveId;
 
         $sql = "INSERT INTO system_notificationdetails 
                 (notificationDetail, notificationKey, notificationLink, notificationType)

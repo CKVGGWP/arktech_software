@@ -136,9 +136,10 @@ class LeaveForm extends Database
     // Insert notifications
     private function insertNotification($pos, $dep = '', $lastID)
     {
+        $link = "/V4/14-13 Notification Software/ck_viewNotification.php?leaveFormId=" . $lastID;
         $info = '';
-        $sql = "INSERT INTO system_notificationdetails (notificationDetail, notificationKey, notificationType)
-        VALUES ('You have a leave application waiting for approval', '$lastID', '38')";
+        $sql = "INSERT INTO system_notificationdetails (notificationDetail, notificationKey, notificationLink, notificationType)
+        VALUES ('You have a leave application waiting for approval', '$lastID', '$link', '38')";
         $result = $this->connect()->query($sql);
 
         if ($result) {
@@ -267,21 +268,62 @@ class LeaveForm extends Database
         return $info;
     }
 
+    private function validateLeave($id)
+    {
+        $sql = "SELECT
+                leaveFrom,
+                leaveTo,
+                status
+                FROM system_leaveform
+                WHERE employeeNumber = '$id'";
+        $result = $this->connect()->query($sql);
+
+        $data = array();
+
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                $data[] = $row;
+            }
+        } else {
+            return false;
+        }
+
+        return $data;
+    }
+
+    private function showError($err)
+    {
+        $info = "";
+        if ($err == "3") {
+            $info = "3";
+        } else {
+            $info = "4";
+        }
+
+        return $info;
+    }
+
+    private function insertToDB($id, $fullName, $positionName, $departmentName, $purpose, $from, $to)
+    {
+        $sql = "INSERT INTO system_leaveform 
+        (dateIssued, employeeNumber, employeeName, designation, department, purposeOfLeave, leaveFrom, leaveTo, status)
+        VALUES (NOW(), '$id', '$fullName', '$positionName', '$departmentName', '$purpose', '$from', '$to', '0')";
+        $result = $this->connect()->query($sql);
+
+        if ($result) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     // Insert Leave inside Database
     public function insertLeave($id, $from, $to, $purpose)
     {
         $users = $this->getUser($id);
 
-        // Convert the signature base64 to image
-        // $signature = base64_decode($signature);
-        // $signature = imagecreatefromstring($signature);
-        // $signature = imagejpeg($signature, 'assets/images/uploads/' . $id . '.jpg');
-
-        // Move the signature to the assets folder
-        // $signature = 'assets/images/uploads/' . $id . '.jpg';
-
-
         foreach ($users as $key => $user) {
+            $userId = $user['idNumber'];
             $userFirstName = $user['firstName'];
             $userSurName = $user['surName'];
             $userPosition = $user['position'];
@@ -301,12 +343,33 @@ class LeaveForm extends Database
             $positionName = $pos['positionName'];
         }
 
-        $sql = "INSERT INTO system_leaveform 
-        (dateIssued, employeeNumber, employeeName, designation, department, purposeOfLeave, leaveFrom, leaveTo, status)
-        VALUES (NOW(), '$id', '$fullName', '$positionName', '$departmentName', '$purpose', '$from', '$to', '0')";
-        $result = $this->connect()->query($sql);
+        $validate = $this->validateLeave($userId);
 
-        if ($result) {
+        if ($validate != false) {
+            foreach ($validate as $key => $val) {
+                $leaveFrom = $val['leaveFrom'];
+                $leaveTo = $val['leaveTo'];
+                $status = $val['status'];
+            }
+
+            if ($status < 4) {
+                if ($leaveFrom == $from) {
+                    $error = "3";
+                    if ($this->showError($error)) {
+                        echo "3";
+                    }
+                    exit();
+                } else if ($leaveTo == $to) {
+                    $error = "4";
+                    if ($this->showError($error)) {
+                        echo "4";
+                    }
+                    exit();
+                }
+            }
+        }
+
+        if ($this->insertToDB($id, $fullName, $positionName, $departmentName, $purpose, $from, $to)) {
 
             $lastId = $this->leaveFormLastId();
 

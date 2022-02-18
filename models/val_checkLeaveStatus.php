@@ -24,7 +24,8 @@ class LeaveStatus extends Database
             $query .= " WHERE employeeNumber = '$id'";
         }
 
-        $query .= " GROUP BY h.leaveId";
+        // $query .= " GROUP BY h.leaveId";
+        $query .= " ORDER BY FIELD(s.status, '0', '3', '2', '1', '4')";
 
         $sql = $this->connect()->query($query);
         $data = [];

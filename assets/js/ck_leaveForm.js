@@ -103,6 +103,18 @@ $(document).ready(function () {
               title: "Something went wrong!",
               text: "There is a problem with the server! Please try again later!",
             });
+          } else if (response == "3") {
+            Swal.fire({
+              icon: "info",
+              title: "Starting Date is Conflict!",
+              text: "Your starting date is conflicting with your on process/on going leave!",
+            });
+          } else if (response == "4") {
+            Swal.fire({
+              icon: "info",
+              title: "End Date is Conflict!",
+              text: "Your end date is conflicting with your on process/on going leave!",
+            });
           }
         },
       });

@@ -25,11 +25,6 @@ if (isset($_POST['leave'])) {
     $from = $_POST['leaveFrom'];
     $to = $_POST['leaveTo'];
     $purpose = $_POST['purpose'];
-    // $signature = $_POST['signature'];
-
-    // Convert the signature JSON to image
-    // $signature = json_decode($signature);
-    // $signature = base64_decode($signature->data);
 
     $leave->insertLeave($id, $from, $to, $purpose);
 }
