@@ -296,8 +296,10 @@ class LeaveForm extends Database
         $info = "";
         if ($err == "3") {
             $info = "3";
-        } else {
+        } else if ($err == "4") {
             $info = "4";
+        } else {
+            $info = "5";
         }
 
         return $info;
@@ -311,6 +313,18 @@ class LeaveForm extends Database
         $result = $this->connect()->query($sql);
 
         if ($result) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private function checkSunday($from, $to)
+    {
+        $from = date("l", strtotime($from));
+        $to = date("l", strtotime($to));
+
+        if ($from == "Sunday" || $to == "Sunday") {
             return true;
         } else {
             return false;
@@ -350,23 +364,31 @@ class LeaveForm extends Database
                 $leaveFrom = $val['leaveFrom'];
                 $leaveTo = $val['leaveTo'];
                 $status = $val['status'];
-            }
 
-            if ($status < 4) {
-                if ($leaveFrom == $from) {
-                    $error = "3";
-                    if ($this->showError($error)) {
-                        echo "3";
+                if ($status < 4) {
+                    if ($leaveFrom == $from || $to < $leaveFrom) {
+                        $error = "3";
+                        if ($this->showError($error)) {
+                            echo "3";
+                        }
+                        exit();
+                    } else if ($leaveTo == $to || $to < $leaveTo) {
+                        $error = "4";
+                        if ($this->showError($error)) {
+                            echo "4";
+                        }
+                        exit();
                     }
-                    exit();
-                } else if ($leaveTo == $to) {
-                    $error = "4";
-                    if ($this->showError($error)) {
-                        echo "4";
-                    }
-                    exit();
                 }
             }
+        }
+
+        if ($this->checkSunday($from, $to)) {
+            $error = "5";
+            if ($this->showError($error)) {
+                echo "5";
+            }
+            exit();
         }
 
         if ($this->insertToDB($id, $fullName, $positionName, $departmentName, $purpose, $from, $to)) {

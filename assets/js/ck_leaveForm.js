@@ -107,13 +107,19 @@ $(document).ready(function () {
             Swal.fire({
               icon: "info",
               title: "Starting Date is Conflict!",
-              text: "Your starting date is conflicting with your on process/on going leave!",
+              text: "Your starting date is conflicting with your on process/on going leave! Please check the status of your on process/on going leave.",
             });
           } else if (response == "4") {
             Swal.fire({
               icon: "info",
               title: "End Date is Conflict!",
-              text: "Your end date is conflicting with your on process/on going leave!",
+              text: "Your end date is conflicting with your on process/on going leave! Please check the status of your on process/on going leave.",
+            });
+          } else if (response == "5") {
+            Swal.fire({
+              icon: "info",
+              title: "Starting Date and End Date is Conflict!",
+              text: "You cannot choose a Sunday as your starting date and ending date! Please choose another date.",
             });
           }
         },

@@ -135,7 +135,7 @@ class Notifications extends Database
                     FROM system_leaveform l 
                     LEFT JOIN system_notificationdetails n ON n.notificationKey = l.listId 
                     LEFT JOIN system_notification s ON s.notificationId = n.notificationId 
-                    WHERE s.notificationTarget = '" . $_SESSION['userID'] . "' AND l.status = '0' 
+                    WHERE s.notificationTarget = '" . $_SESSION['idNumber'] . "' AND l.status = '0' 
                     GROUP BY l.department";
         }
 

@@ -8,8 +8,6 @@ $leave = new LeaveForm();
 if (isset($_GET['calendar'])) {
     $holidays = $leave->holidays();
 
-    $data = array();
-
     foreach ($holidays as $holiday) {
         $data[] = array(
             'from' => $holiday['holidayDate'],

@@ -5,7 +5,7 @@ require("../models/val_notifications.php");
 
 session_start();
 
-$userID = isset($_SESSION['userID']) ? $_SESSION['userID'] : '';
+$userID = isset($_SESSION['idNumber']) ? $_SESSION['idNumber'] : '';
 
 $notifications = new Notifications();
 

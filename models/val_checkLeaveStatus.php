@@ -18,14 +18,14 @@ class LeaveStatus extends Database
                 h.status AS hrStatus, 
                 h.transpoAllowance 
                 FROM system_leaveform s 
-                LEFT JOIN hr_leave h ON h.employeeId = s.employeeNumber";
+                LEFT JOIN hr_leave h ON h.leaveRemarks = s.purposeOfLeave";
 
         if ($this->getPosition() != 'HR Staff' && $this->getPosition() != 'President') {
             $query .= " WHERE employeeNumber = '$id'";
         }
 
         // $query .= " GROUP BY h.leaveId";
-        $query .= " ORDER BY FIELD(s.status, '0', '3', '2', '1', '4')";
+        $query .= " ORDER BY FIELD(s.status, '0', '3', '2', '1', '4'), s.dateIssued DESC";
 
         $sql = $this->connect()->query($query);
         $data = [];
