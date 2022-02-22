@@ -94,7 +94,7 @@ class LeaveForm extends Database
     }
 
     // Get position by id
-    private function getPosition($id)
+    public function getPosition($id)
     {
         $sql = "SELECT * FROM hr_positions WHERE positionId = '$id'";
         $result = $this->connect()->query($sql);
@@ -156,7 +156,8 @@ class LeaveForm extends Database
                         FROM hr_employee t 
                         LEFT JOIN hr_positions p ON t.position = p.positionId 
                         WHERE p.positionName 
-                        LIKE '%factory%' OR p.positionName LIKE '%president%'";
+                        LIKE '%factory%' OR p.positionName LIKE '%president%'
+                        AND t.status = 1";
                 $orangeQuery = $this->connect()->query($orangePos);
 
                 while ($orangeRow = $orangeQuery->fetch_assoc()) {
@@ -183,7 +184,8 @@ class LeaveForm extends Database
                         FROM hr_employee t 
                         LEFT JOIN hr_positions p ON t.position = p.positionId 
                         WHERE p.positionName 
-                        LIKE '%president%'";
+                        LIKE '%president%'
+                        AND t.status = 1";
                 $blueQuery = $this->connect()->query($bluePos);
 
                 while ($blueRow = $blueQuery->fetch_assoc()) {
@@ -211,7 +213,8 @@ class LeaveForm extends Database
                         LEFT JOIN hr_positions p ON t.position = p.positionId 
                         WHERE t.departmentId = '$dep' 
                         AND (p.positionName LIKE '%manager%' OR p.positionName LIKE '%supervisor%') 
-                        AND NOT p.positionName LIKE '%factory%'";
+                        AND NOT p.positionName LIKE '%factory%'
+                        AND t.status = 1";
                 $yellowQuery = $this->connect()->query($yellowPos);
 
                 // If there is an available manager from the department, run this query
@@ -239,7 +242,8 @@ class LeaveForm extends Database
                         FROM hr_employee t 
                         LEFT JOIN hr_positions p ON t.position = p.positionId 
                         WHERE p.positionName 
-                        LIKE '%factory%' OR p.positionName LIKE '%president%'";
+                        LIKE '%factory%' OR p.positionName LIKE '%president%'
+                        AND t.status = 1";
                     $notifyHigherPos = $this->connect()->query($higherPos);
 
                     if ($notifyHigherPos) {
@@ -404,6 +408,24 @@ class LeaveForm extends Database
         } else {
             echo "2";
             exit();
+        }
+    }
+
+    public function byPassInsert($data = array())
+    {
+        $status = $data['status'];
+        $leaveType = $data['leaveType'];
+        $type = $data['type'];
+        $transpo = $data['transpo'];
+        $quarantine = $data['quarantine'];
+        $purpose = $data['purpose'];
+
+        for ($i = 0; $i < count($data['employees']); $i++) {
+            print_r($data['employees'][$i]);
+
+            for ($i = 0; $i < count($data['dates']); $i++) {
+                print_r($data['dates'][$i]);
+            }
         }
     }
 }

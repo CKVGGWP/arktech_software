@@ -31,3 +31,7 @@ textarea {
     height: 120px;
     width: 100%;
 }
+
+.select2 {
+    width: 100% !important;
+}

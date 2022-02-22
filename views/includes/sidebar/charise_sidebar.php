@@ -12,6 +12,11 @@
                 </a>
             </li>
             <li class="nav-item">
+                <a class="nav-link" href="charise_byPass?title=Bypass">
+                    <div class="nav-link"><i class="fas fa-file"></i> Bypass </div>
+                </a>
+            </li>
+            <li class="nav-item">
                 <a class="nav-link" href="val_checkLeaveStatus.php?title=Leave Status">
                     <div class="nav-link"><i class="fas fa-status"></i> Status </div>
                 </a>
