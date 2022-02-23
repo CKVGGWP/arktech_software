@@ -6,7 +6,7 @@ require("../models/ck_leaveForms.php");
 $byPass = new LeaveForm();
 
 if (isset($_POST['multi'])) {
-    $employees = $_POST['employees'];
+    $employees = $_POST['employee'];
     $dates = $_POST['leaveDatesArray'];
     $status = $_POST['status'];
     $leaveType = $_POST['leaveType'];

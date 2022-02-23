@@ -29,7 +29,7 @@ $(document).ready(function () {
   $("#submitLeave").on("submit", function (e) {
     e.preventDefault();
 
-    let employees = [];
+    // let employees = [];
     let employee = $("#employees").val();
     let leaveDate = $("#leaveDates").val();
     let status = $("#status").val();
@@ -40,9 +40,9 @@ $(document).ready(function () {
     let leaveType = $("#leaveType").val();
     let leaveDatesArray = leaveDate.split(",");
 
-    $("#employees").each(function () {
-      employees.push($(this).val());
-    });
+    // $("#employees").each(function () {
+    //   employees.push($(this).val());
+    // });
 
     if (employee == "") {
       Swal.fire({
@@ -68,7 +68,7 @@ $(document).ready(function () {
         type: "POST",
         data: {
           multi: 1,
-          employees: employees,
+          employee: employee,
           leaveDatesArray: leaveDatesArray,
           status: status,
           leaveType: leaveType,
@@ -77,7 +77,23 @@ $(document).ready(function () {
           quarantine: quarantine,
           purpose: purpose,
         },
-        success: function (response) {},
+        beforeSend: function () {
+          $("#blur").addClass("blur-active");
+          $(".preloader").show();
+        },
+        complete: function () {
+          $("#blur").removeClass("blur-active");
+          $(".preloader").hide();
+        },
+        success: function (response) {
+          Swal.fire({
+            icon: "success",
+            title: "Success!",
+            text: "Leave has been submitted!",
+          }).then((result) => {
+            window.location.href = "ck_leaveForm.php?title=Dashboard";
+          });
+        },
       });
     }
   });

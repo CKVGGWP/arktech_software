@@ -420,12 +420,26 @@ class LeaveForm extends Database
         $quarantine = $data['quarantine'];
         $purpose = $data['purpose'];
 
-        for ($i = 0; $i < count($data['employees']); $i++) {
-            print_r($data['employees'][$i]);
+        $sql = '';
 
-            for ($i = 0; $i < count($data['dates']); $i++) {
-                print_r($data['dates'][$i]);
+        for ($i = 0; $i < count($data['employees']); $i++) {
+            $employees = $data['employees'][$i];
+
+            for ($j = 0; $j < count($data['dates']); $j++) {
+                $dates = $data['dates'][$j];
+
+                $sql = "INSERT INTO hr_leave
+                (employeeId, leaveType, leaveDate, leaveDateUntil, leaveRemarks, status, type, transpoAllowance, quarantineFlag)
+                VALUES ('$employees', '$leaveType', '$dates', '$dates', '$purpose', '$status', '$type', '$transpo', '$quarantine')";
+
+                $result = $this->connect()->query($sql);
             }
+        }
+
+        if ($result) {
+            return true;
+        } else {
+            return false;
         }
     }
 }
