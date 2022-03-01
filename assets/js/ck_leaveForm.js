@@ -18,6 +18,12 @@ $(document).ready(function () {
           locale: {
             firstDayOfWeek: 1, // start week on Monday
           },
+          // set the disabled dates color to red
+          onReady: function (dateObj, dateStr, instance) {
+            instance.calendarContainer.querySelector(
+              ".flatpickr-days"
+            ).style.color = "red";
+          },
         });
       },
     });

@@ -3,10 +3,16 @@
 require("../models/ck_database.php");
 require("../models/ck_leaveForms.php");
 
+session_start();
+
+$userID = isset($_SESSION['idNumber']) ? $_SESSION['idNumber'] : "";
+
 $leave = new LeaveForm();
 
 if (isset($_GET['calendar'])) {
     $holidays = $leave->holidays();
+    $Sundays = $leave->getSunday();
+    // $leaves = $leave->getAllLeaveById($userID);
 
     foreach ($holidays as $holiday) {
         $data[] = array(
@@ -14,6 +20,20 @@ if (isset($_GET['calendar'])) {
             'to' => $holiday['holidayDate'],
         );
     }
+
+    foreach ($Sundays as $Sunday) {
+        $data[] = array(
+            'from' => $Sunday['SundayDate'],
+            'to' => $Sunday['SundayDate'],
+        );
+    }
+
+    // foreach ($leaves as $leave) {
+    //     $data[] = array(
+    //         'from' => $leave['leaveFrom'],
+    //         'to' => $leave['leaveTo'],
+    //     );
+    // }
 
     echo json_encode($data);
 }

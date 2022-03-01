@@ -30,6 +30,42 @@ class LeaveForm extends Database
         return $holidays;
     }
 
+    public function getSunday()
+    {
+        $year = date("Y");
+        $dateStart = new DateTime($year . "-01-01");
+        $dateEnd = new DateTime($year . "-12-31");
+        $Sunday = array();
+
+        while ($dateStart <= $dateEnd) {
+            if ($dateStart->format("l") == "Sunday") {
+                $Sunday[] = array(
+                    "SundayDate" => $dateStart->format("Y-m-d")
+                );
+            }
+            $dateStart->modify("+1 day");
+        }
+
+        return $Sunday;
+    }
+
+    public function getAllLeaveById($id)
+    {
+        $sql = "SELECT 
+                leaveFrom,
+                leaveTo
+                FROM system_leaveform
+                WHERE employeeNumber = '$id' AND status < 4";
+        $result = $this->connect()->query($sql);
+        $leaves = array();
+
+        while ($row = $result->fetch_assoc()) {
+            $leaves[] = $row;
+        }
+
+        return $leaves;
+    }
+
     // Get All User
     public function getAllUser()
     {
@@ -272,41 +308,22 @@ class LeaveForm extends Database
         return $info;
     }
 
-    private function validateLeave($id)
+    // Insert Leave inside Database
+    private function validateLeave($id, $from, $to)
     {
-        $sql = "SELECT
-                leaveFrom,
-                leaveTo,
-                status
-                FROM system_leaveform
-                WHERE employeeNumber = '$id'";
+        $sql = "SELECT * 
+        		FROM system_leaveform 
+                WHERE employeeNumber = '$id' 
+                AND (leaveFrom BETWEEN '$from' AND '$to' 
+                OR leaveTo BETWEEN '$from' AND '$to')
+                AND status < 4";
         $result = $this->connect()->query($sql);
 
-        $data = array();
-
         if ($result->num_rows > 0) {
-            while ($row = $result->fetch_assoc()) {
-                $data[] = $row;
-            }
-        } else {
             return false;
-        }
-
-        return $data;
-    }
-
-    private function showError($err)
-    {
-        $info = "";
-        if ($err == "3") {
-            $info = "3";
-        } else if ($err == "4") {
-            $info = "4";
         } else {
-            $info = "5";
+            return true;
         }
-
-        return $info;
     }
 
     private function insertToDB($id, $fullName, $positionName, $departmentName, $purpose, $from, $to)
@@ -317,18 +334,6 @@ class LeaveForm extends Database
         $result = $this->connect()->query($sql);
 
         if ($result) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    private function checkSunday($from, $to)
-    {
-        $from = date("l", strtotime($from));
-        $to = date("l", strtotime($to));
-
-        if ($from == "Sunday" || $to == "Sunday") {
             return true;
         } else {
             return false;
@@ -361,37 +366,10 @@ class LeaveForm extends Database
             $positionName = $pos['positionName'];
         }
 
-        $validate = $this->validateLeave($userId);
+        $validate = $this->validateLeave($userId, $from, $to);
 
-        if ($validate != false) {
-            foreach ($validate as $key => $val) {
-                $leaveFrom = $val['leaveFrom'];
-                $leaveTo = $val['leaveTo'];
-                $status = $val['status'];
-
-                if ($status < 4) {
-                    if ($leaveFrom == $from || $to < $leaveFrom) {
-                        $error = "3";
-                        if ($this->showError($error)) {
-                            echo "3";
-                        }
-                        exit();
-                    } else if ($leaveTo == $to || $to < $leaveTo) {
-                        $error = "4";
-                        if ($this->showError($error)) {
-                            echo "4";
-                        }
-                        exit();
-                    }
-                }
-            }
-        }
-
-        if ($this->checkSunday($from, $to)) {
-            $error = "5";
-            if ($this->showError($error)) {
-                echo "5";
-            }
+        if ($validate == false) {
+            echo "3";
             exit();
         }
 
