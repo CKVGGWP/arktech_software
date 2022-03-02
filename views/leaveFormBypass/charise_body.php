@@ -1,13 +1,16 @@
 		<?php include('controllers/ck_byPassController.php'); ?>
 		<div class="row d-flex justify-content-center align-items-center">
-			<div class="col-md-8 mt-5">
+			<div class="col-md-8 mt-3">
 				<div id="blur">
 					<div class="preloader" style="display: none;">
 						<img src="assets/images/Settings.gif" alt="preloader" id="preloader">
 					</div>
+					<div class="pb-3">
+						<a href="ck_leaveForm.php?title=Leave 20Input Form" class="btn btn-outline-light text-dark"><i class="fas fa-angle-left"></i> Back</a>
+					</div>
 					<div class="card">
-						<div class="card-header text-white">
-							<a href="ck_leaveForm.php?title=Leave 20Input Form" class="btn btn-outline-light text-dark"><i class="fas fa-angle-left"></i> Back</a>
+						<div class="card-header">
+							<h4 class="text-center">Bypass Leave Form</h4>
 						</div>
 						<div class="card-body" style="height: auto;">
 							<div class="row mb-2">

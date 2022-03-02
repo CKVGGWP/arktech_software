@@ -55,7 +55,8 @@ class LeaveForm extends Database
                 leaveFrom,
                 leaveTo
                 FROM system_leaveform
-                WHERE employeeNumber = '$id' AND status < 4";
+                WHERE employeeNumber = '$id' 
+                AND status < 4";
         $result = $this->connect()->query($sql);
         $leaves = array();
 
@@ -159,7 +160,11 @@ class LeaveForm extends Database
     // Get the last ID of table system_notificationdetails
     private function notificationLastID()
     {
-        $sql = "SELECT notificationId FROM system_notificationdetails ORDER BY notificationId DESC LIMIT 1";
+        $sql = "SELECT 
+                notificationId 
+                FROM system_notificationdetails 
+                ORDER BY notificationId DESC 
+                LIMIT 1";
         $result = $this->connect()->query($sql);
 
         if ($row = $result->fetch_assoc()) {
@@ -314,8 +319,9 @@ class LeaveForm extends Database
         $sql = "SELECT * 
         		FROM system_leaveform 
                 WHERE employeeNumber = '$id' 
-                AND (leaveFrom BETWEEN '$from' AND '$to' 
-                OR leaveTo BETWEEN '$from' AND '$to')
+                AND (leaveFrom <= '$from' AND leaveTo >= '$to') 
+                AND NOT (leaveFrom <= '$from' AND leaveTo > '$to') 
+                AND NOT (leaveFrom > '$from' AND leaveTo >= '$to') 
                 AND status < 4";
         $result = $this->connect()->query($sql);
 
