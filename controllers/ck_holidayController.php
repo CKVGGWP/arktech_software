@@ -44,5 +44,12 @@ if (isset($_POST['leave'])) {
     $to = $_POST['leaveTo'];
     $purpose = $_POST['purpose'];
 
-    $leave->insertLeave($id, $from, $to, $purpose);
+    $uploadFile = $_FILES['uploadFile'];
+    //print_r($uploadFile);
+
+    // $signature = $_POST['signature'];
+
+    // $signature = json_decode($signature);
+
+    $leave->insertLeave($id, $from, $to, $purpose, $uploadFile);
 }

@@ -1,15 +1,21 @@
 <?php
 
+// Modified by CK
+
 class LeaveStatus extends Database
 {
     public function getTable($id)
     {
-        $query = "SELECT 
+        $query = "SELECT
+                DISTINCT(s.listId), 
                 s.dateIssued, 
                 s.employeeName, 
                 s.purposeOfLeave, 
                 s.leaveFrom, 
-                s.leaveTo, 
+                s.leaveTo,
+                s.documents,
+                s.reasonOfLeader,
+                s.dateApproveDenyByLeader,
                 s.status, 
                 s.reasonOfSuperior, 
                 s.date, 
@@ -25,7 +31,7 @@ class LeaveStatus extends Database
         }
 
         // $query .= " GROUP BY h.leaveId";
-        $query .= " GROUP BY s.listId ORDER BY FIELD(s.status, '0', '3', '2', '1', '4'), s.dateIssued DESC";
+        $query .= " ORDER BY FIELD(s.status, '0', '3', '2', '1', '4'), s.dateIssued DESC";
 
         $sql = $this->connect()->query($query);
         $data = [];
@@ -37,9 +43,11 @@ class LeaveStatus extends Database
                 $headApproval = false;
 
                 if ($status == 0) {
-                    $status = "For Head Approval";
+                    $status = "For Leader/Superior Approval";
+                } else if ($status == 1) {
+                    $status = "Approved by Leader";
                 } else if ($status == 2 && $reasonOfSuperior != "" && $headApproval == false) {
-                    $status = "Approved By Head";
+                    $status = "Approved By Superior";
                     $headApproval = true;
                 } else if ($status == 4) {
                     $status = "Disapproved";
@@ -68,13 +76,22 @@ class LeaveStatus extends Database
                 } else {
                     $statusOfHR = "With Pay";
                 }
-
+                $buttonValue = "";
+                if ($documents != "") {
+                    //FURTHER EDITIFICATION----------------------------------------------------------------------------------VAL
+                    $buttonValue = '<div class="btn-group">
+                                		<a class="btn btn-info" target="_blank"href="' . $documents . '">View</a>
+                            		</div>';
+                }
                 $data[] = [
                     date("F j, Y", strtotime($dateIssued)),
                     $employeeName,
                     $purposeOfLeave,
                     date("F j, Y", strtotime($leaveFrom)),
                     date("F j, Y", strtotime($leaveTo)),
+                    $buttonValue,
+                    $reasonOfLeader,
+                    ($dateApproveDenyByLeader == "0000-00-00" ? "" : date("F j, Y", strtotime($dateApproveDenyByLeader))),
                     $reasonOfSuperior,
                     ($date == "0000-00-00") ? "" : date("F j, Y", strtotime($date)),
                     $hrRemarks,
@@ -101,7 +118,7 @@ class LeaveStatus extends Database
     {
         $sql = "SELECT p.positionName FROM hr_employee e 
                 LEFT JOIN hr_positions p ON e.position = p.positionId 
-                WHERE e.idNumber = '" . $_SESSION['userID'] . "'";
+                WHERE e.idNumber = '" . $_SESSION['idNumber'] . "'";
         $query = $this->connect()->query($sql);
 
         $result = $query->fetch_assoc();

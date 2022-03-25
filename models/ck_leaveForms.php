@@ -2,19 +2,32 @@
 
 class LeaveForm extends Database
 {
-    // Orange Positions Array
-    private $orangePositions = array(
+    // Leader Array
+    private $leaderPos = array(
+        "Team Leader"
+    );
+
+    // Supervisor Array
+    private $supervisorPos = array(
         "Assistant Supervisor", "Supervisor",
+    );
+
+    // Manager Array
+    private $managerPos = array(
         "Assistant Manager", "Manager",
         "Technical Development /IT Dept. Manager/ Safety Officer",
         "Manager / Safety Officer"
     );
 
-    // Blue and Green Position Array
-    private $bluePositions = array(
+    // Factory Manager and President Array
+    private $higherPos = array(
         "Deputy Factory Manager/PCO", "Factory Manager",
         "President"
     );
+
+    private $leaderPosition = "Team Leader";
+    private $supervisorPosition = "Supervisor";
+    private $managerPosition = "manager";
 
     // Get Holiday
     public function holidays()
@@ -55,8 +68,7 @@ class LeaveForm extends Database
                 leaveFrom,
                 leaveTo
                 FROM system_leaveform
-                WHERE employeeNumber = '$id' 
-                AND status < 4";
+                WHERE employeeNumber = '$id' AND status < 4";
         $result = $this->connect()->query($sql);
         $leaves = array();
 
@@ -82,20 +94,9 @@ class LeaveForm extends Database
     }
 
     // Check if position is inside array
-    private function checkString($position)
+    private function checkString($position, $array)
     {
-        if (in_array($position, $this->orangePositions)) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    // Check if position is a blue position
-
-    private function checkBluePosition($position)
-    {
-        if (in_array($position, $this->bluePositions)) {
+        if (in_array($position, $array)) {
             return true;
         } else {
             return false;
@@ -114,6 +115,19 @@ class LeaveForm extends Database
         }
 
         return $users;
+    }
+
+    private function getSection($id)
+    {
+        $sql = "SELECT * FROM ppic_section WHERE sectionId = '$id'";
+        $result = $this->connect()->query($sql);
+        $section = array();
+
+        while ($row = $result->fetch_assoc()) {
+            $section[] = $row;
+        }
+
+        return $section;
     }
 
     // Get department by id
@@ -160,11 +174,7 @@ class LeaveForm extends Database
     // Get the last ID of table system_notificationdetails
     private function notificationLastID()
     {
-        $sql = "SELECT 
-                notificationId 
-                FROM system_notificationdetails 
-                ORDER BY notificationId DESC 
-                LIMIT 1";
+        $sql = "SELECT notificationId FROM system_notificationdetails ORDER BY notificationId DESC LIMIT 1";
         $result = $this->connect()->query($sql);
 
         if ($row = $result->fetch_assoc()) {
@@ -174,8 +184,91 @@ class LeaveForm extends Database
         return $id;
     }
 
+    private function selectPos($pos, $dept, $secId = '')
+    {
+        $sql = "";
+        $sql .= "SELECT 
+                t.idNumber, 
+                t.firstName, 
+                p.positionName 
+                FROM hr_employee t 
+                LEFT JOIN hr_positions p ON t.position = p.positionId 
+                WHERE p.positionName LIKE '%$pos%'
+                AND t.departmentId = '$dept'
+                AND t.status = 1";
+        if ($pos == "Team Leader") {
+            $sql .= " AND t.sectionId = '$secId'";
+        }
+        $query = $this->connect()->query($sql);
+
+        return $query;
+    }
+
+    private function selectManager($dept)
+    {
+        $sql = "SELECT 
+                t.idNumber, 
+                t.firstName, 
+                p.positionName 
+                FROM hr_employee t 
+                LEFT JOIN hr_positions p ON t.position = p.positionId 
+                WHERE t.departmentId = '$dept' 
+                AND (p.positionName LIKE '%supervisor%' OR p.positionName LIKE '%manager%') 
+                AND NOT p.positionName LIKE '%factory%'
+                AND t.status = 1";
+        $query = $this->connect()->query($sql);
+
+        return $query;
+    }
+
+    private function selectFactoryManager()
+    {
+        $sql = "SELECT 
+                t.idNumber, 
+                t.firstName, 
+                p.positionName 
+                FROM hr_employee t 
+                LEFT JOIN hr_positions p ON t.position = p.positionId 
+                WHERE p.positionName 
+                LIKE '%factory%'
+                AND t.status = 1";
+        $query = $this->connect()->query($sql);
+
+        return $query;
+    }
+
+    private function selectPresident()
+    {
+        $sql = "SELECT 
+                t.idNumber, 
+                t.firstName, 
+                p.positionName 
+                FROM hr_employee t 
+                LEFT JOIN hr_positions p ON t.position = p.positionId 
+                WHERE p.positionName 
+                LIKE '%president%'
+                AND t.status = 1";
+        $query = $this->connect()->query($sql);
+
+        return $query;
+    }
+
+    private function notificationQuery($last_id, $id)
+    {
+        $sql = "INSERT INTO system_notification 
+                (notificationId, notificationTarget, notificationStatus, targetType)
+                VALUES ('$last_id', '$id', '0', '2')";
+        $query = $this->connect()->query($sql);
+
+        if ($query) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     // Insert notifications
-    private function insertNotification($pos, $dep = '', $lastID)
+    private function insertNotification($pos, $dep = '', $lastID, $sectionId)
     {
         $link = "/V4/14-13 Notification Software/ck_viewNotification.php?leaveFormId=" . $lastID;
         $info = '';
@@ -187,141 +280,189 @@ class LeaveForm extends Database
 
             $last_id = $this->notificationLastID();
 
-            // If orange positions request a leave, run this query
+            // If the leader requests a leave, run this query
 
-            if ($this->checkString($pos)) {
-                $orangePos = "SELECT 
-                        t.idNumber, 
-                        t.firstName, 
-                        p.positionName 
-                        FROM hr_employee t 
-                        LEFT JOIN hr_positions p ON t.position = p.positionId 
-                        WHERE p.positionName 
-                        LIKE '%factory%' OR p.positionName LIKE '%president%'
-                        AND t.status = 1";
-                $orangeQuery = $this->connect()->query($orangePos);
+            if ($this->checkString($pos, $this->leaderPos)) {
 
-                while ($orangeRow = $orangeQuery->fetch_assoc()) {
-                    $orangeId = $orangeRow['idNumber'];
-                    $insertOrange = "INSERT INTO system_notification 
-                    (notificationId, notificationTarget, notificationStatus, targetType)
-                    VALUES ('$last_id', '$orangeId', '0', '2')";
-                    $orangeResult = $this->connect()->query($insertOrange);
+                // If there is a supervisor, send notification to supervisor
 
-                    if ($orangeResult) {
-                        $info = "1";
-                    } else {
-                        $info = "2";
-                    }
-                }
-            } else if ($this->checkBluePosition($pos)) {
+                $supervisorResult = $this->selectManager($dep);
 
-                // If blue and green positions request a leave, run this query
+                if ($supervisorResult->num_rows > 0) {
+                    while ($supervisorRow = $supervisorResult->fetch_assoc()) {
+                        $supervisorId = $supervisorRow['idNumber'];
+                        $insertSupervisor = $this->notificationQuery($last_id, $supervisorId);
 
-                $bluePos = "SELECT 
-                        t.idNumber, 
-                        t.firstName, 
-                        p.positionName 
-                        FROM hr_employee t 
-                        LEFT JOIN hr_positions p ON t.position = p.positionId 
-                        WHERE p.positionName 
-                        LIKE '%president%'
-                        AND t.status = 1";
-                $blueQuery = $this->connect()->query($bluePos);
-
-                while ($blueRow = $blueQuery->fetch_assoc()) {
-                    $blueId = $blueRow['idNumber'];
-                    $insertBlue = "INSERT INTO system_notification 
-                    (notificationId, notificationTarget, notificationStatus, targetType)
-                    VALUES ('$last_id', '$blueId', '0', '2')";
-                    $blueResult = $this->connect()->query($insertBlue);
-
-                    if ($blueResult) {
-                        $info = "1";
-                    } else {
-                        $info = "2";
-                    }
-                }
-            } else {
-
-                // If yellow positions request a leave, run this query
-
-                $yellowPos = "SELECT 
-                        t.idNumber, 
-                        t.firstName, 
-                        p.positionName 
-                        FROM hr_employee t 
-                        LEFT JOIN hr_positions p ON t.position = p.positionId 
-                        WHERE t.departmentId = '$dep' 
-                        AND (p.positionName LIKE '%manager%' OR p.positionName LIKE '%supervisor%') 
-                        AND NOT p.positionName LIKE '%factory%'
-                        AND t.status = 1";
-                $yellowQuery = $this->connect()->query($yellowPos);
-
-                // If there is an available manager from the department, run this query
-
-                if ($yellowQuery->num_rows > 0) {
-                    while ($yellowRow = $yellowQuery->fetch_assoc()) {
-                        $yellowId = $yellowRow['idNumber'];
-                        $insertYellow = "INSERT INTO system_notification 
-                        (notificationId, notificationTarget, notificationStatus, targetType)
-                        VALUES ('$last_id', '$yellowId', '0', '2')";
-                        $yellowResult = $this->connect()->query($insertYellow);
-
-                        if ($yellowResult) {
+                        if ($insertSupervisor) {
                             $info = "1";
                         } else {
                             $info = "2";
                         }
                     }
                 } else {
-                    // If there is no available manager from the department, run this query
-                    $higherPos = "SELECT 
-                        t.idNumber, 
-                        t.firstName, 
-                        p.positionName 
-                        FROM hr_employee t 
-                        LEFT JOIN hr_positions p ON t.position = p.positionId 
-                        WHERE p.positionName 
-                        LIKE '%factory%' OR p.positionName LIKE '%president%'
-                        AND t.status = 1";
-                    $notifyHigherPos = $this->connect()->query($higherPos);
 
-                    if ($notifyHigherPos) {
-                        while ($notifyHigherRow = $notifyHigherPos->fetch_assoc()) {
-                            $notifyHigherId = $notifyHigherRow['idNumber'];
-                            $insertHigher = "INSERT INTO system_notification 
-                            (notificationId, notificationTarget, notificationStatus, targetType)
-                            VALUES ('$last_id', '$notifyHigherId', '0', '2')";
-                            $higherResult = $this->connect()->query($insertHigher);
+                    // If there is no manager, send notification to factory manager
 
-                            if ($higherResult) {
+                    $factoryManagerResult = $this->selectFactoryManager();
+
+                    if ($factoryManagerResult->num_rows > 0) {
+                        while ($factoryManagerRow = $factoryManagerResult->fetch_assoc()) {
+                            $factoryManagerId = $factoryManagerRow['idNumber'];
+                            $insertFactoryManager = $this->notificationQuery($last_id, $factoryManagerId);
+
+                            if ($insertFactoryManager) {
+                                $info = "1";
+                            } else {
+                                $info = "2";
+                            }
+                        }
+                    }
+                }
+
+                // If the supervisor requests a leave, run this query
+
+            } else if ($this->checkString($pos, $this->supervisorPos)) {
+
+                // If there is a manager, send notification to manager
+
+                $managerResult = $this->selectManager($this->managerPosition, $dep);
+
+                if ($managerResult->num_rows > 0) {
+                    while ($managerRow = $managerResult->fetch_assoc()) {
+                        $managerId = $managerRow['idNumber'];
+                        $insertManager = $this->notificationQuery($last_id, $managerId);
+
+                        if ($insertManager) {
+                            $info = "1";
+                        } else {
+                            $info = "2";
+                        }
+                    }
+                } else {
+
+                    // If there is no manager, send notification to factory manager
+
+                    $factoryManagerResult = $this->selectFactoryManager();
+
+                    if ($factoryManagerResult->num_rows > 0) {
+                        while ($factoryManagerRow = $factoryManagerResult->fetch_assoc()) {
+                            $factoryManagerId = $factoryManagerRow['idNumber'];
+                            $insertFactoryManager = $this->notificationQuery($last_id, $factoryManagerId);
+
+                            if ($insertFactoryManager) {
+                                $info = "1";
+                            } else {
+                                $info = "2";
+                            }
+                        }
+                    }
+                }
+
+                // If the manager requests a leave, run this query
+
+            } else if ($this->checkString($pos, $this->managerPos)) {
+
+                // If there is a factory manager, send notification to factory manager
+
+                $factoryManagerResult = $this->selectFactoryManager();
+
+                if ($factoryManagerResult->num_rows > 0) {
+                    while ($factoryManagerRow = $factoryManagerResult->fetch_assoc()) {
+                        $factoryManagerId = $factoryManagerRow['idNumber'];
+                        $insertFactoryManager = $this->notificationQuery($last_id, $factoryManagerId);
+
+                        if ($insertFactoryManager) {
+                            $info = "1";
+                        } else {
+                            $info = "2";
+                        }
+                    }
+                }
+            } else if ($this->checkString($pos, $this->higherPos)) {
+
+                // If the factory manager or president requests a leave, run this query
+
+                $higherPosResult = $this->selectPresident();
+
+                if ($higherPosResult->num_rows > 0) {
+                    while ($higherPosRow = $higherPosResult->fetch_assoc()) {
+                        $higherPosId = $higherPosRow['idNumber'];
+                        $insertHigherPos = $this->notificationQuery($last_id, $higherPosId);
+
+                        if ($insertHigherPos) {
+                            $info = "1";
+                        } else {
+                            $info = "2";
+                        }
+                    }
+                }
+            } else {
+                // If employee requests a leave, run this query
+                // If there is a leader, send notification to leader
+
+                $leaderResult = $this->selectPos($this->leaderPosition, $dep, $sectionId);
+
+                if ($leaderResult->num_rows > 0) {
+                    while ($leaderRow = $leaderResult->fetch_assoc()) {
+                        $leaderId = $leaderRow['idNumber'];
+                        $insertLeader = $this->notificationQuery($last_id, $leaderId);
+
+                        if ($insertLeader) {
+                            $info = "1";
+                        } else {
+                            $info = "2";
+                        }
+                    }
+                } else {
+
+                    // If there is no leader, send notification to supervisor and manager
+
+                    $supervisorResult = $this->selectManager($dep);
+
+                    if ($supervisorResult->num_rows > 0) {
+                        while ($supervisorRow = $supervisorResult->fetch_assoc()) {
+                            $supervisorId = $supervisorRow['idNumber'];
+                            $insertSupervisor = $this->notificationQuery($last_id, $supervisorId);
+
+                            if ($insertSupervisor) {
                                 $info = "1";
                             } else {
                                 $info = "2";
                             }
                         }
                     } else {
-                        $info = "2";
+
+                        // If there is no manager, send notification to factory manager
+
+                        $factoryManagerResult = $this->selectFactoryManager();
+
+                        if ($factoryManagerResult->num_rows > 0) {
+                            while ($factoryManagerRow = $factoryManagerResult->fetch_assoc()) {
+                                $factoryManagerId = $factoryManagerRow['idNumber'];
+                                $insertFactoryManager = $this->notificationQuery($last_id, $factoryManagerId);
+
+                                if ($insertFactoryManager) {
+                                    $info = "1";
+                                } else {
+                                    $info = "2";
+                                }
+                            }
+                        }
                     }
                 }
             }
-        } else {
-            $info = "2";
-        }
 
-        return $info;
+            return $info;
+        }
     }
 
     // Insert Leave inside Database
     private function validateLeave($id, $from, $to)
     {
         $sql = "SELECT * 
-        		FROM system_leaveform 
-                WHERE employeeNumber = '$id' 
+        		FROM system_leaveform WHERE employeeNumber = '$id' 
                 AND (leaveFrom <= '$from' AND leaveTo >= '$to') 
-                AND NOT (leaveFrom <= '$from' AND leaveTo > '$to') 
-                AND NOT (leaveFrom > '$from' AND leaveTo >= '$to') 
+                AND NOT (leaveFrom > '$to' OR leaveTo < '$from') 
                 AND status < 4";
         $result = $this->connect()->query($sql);
 
@@ -332,11 +473,11 @@ class LeaveForm extends Database
         }
     }
 
-    private function insertToDB($id, $fullName, $positionName, $departmentName, $purpose, $from, $to)
+    private function insertToDB($id, $fullName, $positionName, $departmentName, $purpose, $from, $to, $fileName)
     {
         $sql = "INSERT INTO system_leaveform 
-        (dateIssued, employeeNumber, employeeName, designation, department, purposeOfLeave, leaveFrom, leaveTo, status)
-        VALUES (NOW(), '$id', '$fullName', '$positionName', '$departmentName', '$purpose', '$from', '$to', '0')";
+        (dateIssued, employeeNumber, employeeName, designation, department, purposeOfLeave, leaveFrom, leaveTo, status, documents)
+        VALUES (NOW(), '$id', '$fullName', '$positionName', '$departmentName', '$purpose', '$from', '$to', '0', '$fileName')";
         $result = $this->connect()->query($sql);
 
         if ($result) {
@@ -347,7 +488,7 @@ class LeaveForm extends Database
     }
 
     // Insert Leave inside Database
-    public function insertLeave($id, $from, $to, $purpose)
+    public function insertLeave($id, $from, $to, $purpose, $uploadFile)
     {
         $users = $this->getUser($id);
 
@@ -357,11 +498,13 @@ class LeaveForm extends Database
             $userSurName = $user['surName'];
             $userPosition = $user['position'];
             $userDept = $user['departmentId'];
+            $userSection = $user['sectionId'];
         }
 
         $fullName = $userFirstName . " " . $userSurName;
         $department = $this->getDepartment($userDept);
         $position = $this->getPosition($userPosition);
+        $section = $this->getSection($userSection);
 
         foreach ($department as $key => $dep) {
             $departmentId = $dep['departmentId'];
@@ -372,18 +515,61 @@ class LeaveForm extends Database
             $positionName = $pos['positionName'];
         }
 
+        foreach ($section as $key => $sec) {
+            $sectionId = $sec['sectionId'];
+        }
+
         $validate = $this->validateLeave($userId, $from, $to);
 
         if ($validate == false) {
             echo "3";
             exit();
         }
+        #Getting Manuscript Files
+        $file = $_FILES['uploadFile'];
+        $fileName = $_FILES['uploadFile']['name'];
+        $fileTmpName = $_FILES['uploadFile']['tmp_name'];
+        $fileSize = $_FILES['uploadFile']['size'];
+        $fileError = $_FILES['uploadFile']['error'];
+        $fileType = $_FILES['uploadFile']['type'];
 
-        if ($this->insertToDB($id, $fullName, $positionName, $departmentName, $purpose, $from, $to)) {
+        $fileExt = explode('.', $fileName);
+        $fileActualExt = strtolower(end($fileExt));
+        $allowed = array('pdf', 'jpeg', 'jpg', 'png');
+
+        date_default_timezone_set('Asia/Manila');
+
+        $date = date('Y-m-d');
+
+        if (!empty($fileName)) {
+            $fileNameNew = str_replace("." . $fileActualExt, "", $fileName) . "_" . $date . "." . $fileActualExt;
+            $fileLocation = "";
+            if (in_array($fileActualExt, $allowed)) {
+                if ($fileError === 0) {
+                    if ($fileSize < 15000000) {
+                        #Manuscript
+                        $fileDestination = '../Leave Documents/' . $fileNameNew;
+                        move_uploaded_file($fileTmpName, $fileDestination);
+                        $fileLocation = "/V4/11-3 Employee Leave/Leave Documents/" . $fileNameNew;
+                    } else {
+                        echo "File is too big";
+                        exit();
+                    }
+                } else {
+                    echo "File error uploading";
+                    exit();
+                }
+            } else {
+                echo "File type not supported";
+                exit();
+            }
+        }
+
+        if ($this->insertToDB($id, $fullName, $positionName, $departmentName, $purpose, $from, $to, $fileLocation)) {
 
             $lastId = $this->leaveFormLastId();
 
-            if ($this->insertNotification($positionName, $departmentId, $lastId) == "1") {
+            if ($this->insertNotification($positionName, $departmentId, $lastId, $sectionId) == "1") {
                 echo "1";
             } else {
                 echo "2";
@@ -402,7 +588,7 @@ class LeaveForm extends Database
         $type = $data['type'];
         $transpo = $data['transpo'];
         $quarantine = $data['quarantine'];
-        $purpose = $data['purpose'];
+        $purpose = "Bypass Leave:" . $data['purpose'];
 
         $sql = '';
 

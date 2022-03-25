@@ -21,23 +21,26 @@
                         </div>
                     </div>
                     <div class="table-responsive">
-                        <table class="table table-bordered table-striped table-hover text-center" id="userTable" width="100%" cellspacing="0">
+                        <table class="table table-bordered table-striped table-hover text-center text-nowrap" id="userTable" width="100%" cellspacing="0">
                             <thead>
                                 <tr>
-                                    <th>Date Issued</th>
+                                    <th class="text-nowrap">Date Issued</th>
                                     <!-- <th>Employee No.</th> -->
                                     <th>Name</th>
                                     <!-- <th>Designation</th>
                                 <th>Department</th> -->
                                     <th>Purpose</th>
-                                    <th>Leave From</th>
-                                    <th>Leave To</th>
-                                    <th>Reason of Superior</th>
-                                    <th>Date of Head Approval/Disapproval</th>
-                                    <th>HR Leave Remarks</th>
-                                    <th>HR Leave Type</th>
+                                    <th class="text-nowrap">Leave From</th>
+                                    <th class="text-nowrap">Leave To</th>
+                                    <th class="text-nowrap">Document</th>
+                                    <th class="text-wrap">Reason of Leader</th>
+                                    <th class="text-wrap">Date of Leader Approval/Disapproval</th>
+                                    <th class="text-wrap">Reason of Superior</th>
+                                    <th class="text-wrap">Date of Head Approval/Disapproval</th>
+                                    <th class="text-wrap">HR Leave Remarks</th>
+                                    <th class="text-nowrap">HR Leave Type</th>
                                     <th>HR Status</th>
-                                    <th>Transportation Allowance</th>
+                                    <th class="text-wrap">Transportation Allowance</th>
                                     <th>Status</th>
                                     <!-- <th>Approved / Denied by Superior</th>
                                 <th>Approved / Denied by Leader</th>
