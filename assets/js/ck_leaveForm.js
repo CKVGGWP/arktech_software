@@ -13,43 +13,30 @@ $(document).ready(function () {
           altInput: true,
           altFormat: "F j, Y",
           dateFormat: "Y-m-d",
-          minDate: new Date().fp_incr(1),
+          //minDate: new Date().fp_incr(1),
           disable: parsed,
           locale: {
             firstDayOfWeek: 1, // start week on Monday
-          },
-          // set the disabled dates color to red
-          onReady: function (dateObj, dateStr, instance) {
-            instance.calendarContainer.querySelector(
-              ".flatpickr-days"
-            ).style.color = "red";
           },
         });
       },
     });
   }
 
-  //   $("#sig").signature();
-
-  //   let sig = $("#sig").signature({
-  //     syncField: "#signature",
-  //     syncFormat: "PNG",
-  //   });
-
-  //   $("#clearSig").on("click", function (e) {
-  //     e.preventDefault();
-  //     sig.signature("clear");
-  //     $("#signature").val("");
-  //   });
-
   $("#leaveForm").on("submit", function (e) {
     e.preventDefault();
 
-    let employee_active = $("#employee_active").val();
-    let leaveFrom = $("#leaveFrom").val();
-    let leaveTo = $("#leaveTo").val();
-    let purpose = $("#purpose").val();
-    // let signature = $("#sig").signature("toJSON");
+    var employee_active = $("#employee_active").val();
+    var leaveFrom = $("#leaveFrom").val();
+    var leaveTo = $("#leaveTo").val();
+    var purpose = $("#purpose").val();
+    var halfDay = $("input[id=halfDay]");
+
+    if (halfDay.prop("checked")) {
+      halfDay = 1;
+    } else {
+      halfDay = 0;
+    }
 
     if (leaveFrom == "") {
       Swal.fire({
@@ -76,17 +63,26 @@ $(document).ready(function () {
         text: "Please enter a purpose of leave!",
       });
     } else {
+      var formData = new FormData();
+
+      var uploadFile = $("#uploadFile")[0].files[0];
+      formData.append("uploadFile", uploadFile);
+      formData.append("leave", "1");
+      formData.append("employee_active", employee_active);
+      formData.append("leaveFrom", leaveFrom);
+      formData.append("leaveTo", leaveTo);
+      formData.append("purpose", purpose);
+      formData.append("halfDay", halfDay);
+      console.log(halfDay);
       $.ajax({
         url: "controllers/ck_holidayController.php",
         type: "POST",
-        data: {
-          leave: 1,
-          employee_active: employee_active,
-          leaveFrom: leaveFrom,
-          leaveTo: leaveTo,
-          purpose: purpose,
-          // signature: signature,
-        },
+        data: formData,
+        async: false,
+        cache: false,
+        contentType: false,
+        processData: false,
+
         beforeSend: function () {
           $("#blur").addClass("blur-active");
           $(".preloader").show();
@@ -96,6 +92,12 @@ $(document).ready(function () {
           $(".preloader").hide();
         },
         success: function (response) {
+          console.log(response);
+          // Swal.fire({
+          // icon: "success",
+          // title: response,
+          // text: "Please wait for the status of your leave request.",
+          // });
           if (response == "1") {
             Swal.fire({
               icon: "success",
@@ -112,20 +114,14 @@ $(document).ready(function () {
           } else if (response == "3") {
             Swal.fire({
               icon: "info",
-              title: "Starting Date is Conflict!",
-              text: "Your starting date is conflicting with your on process/on going leave! Please check the status of your on process/on going leave.",
+              title: "Starting Date or End Date is Conflict!",
+              text: "Your starting or end date is in conflict! Please check the status of your ongoing/on approval leave and choose another date.",
             });
-          } else if (response == "4") {
+          } else {
             Swal.fire({
-              icon: "info",
-              title: "End Date is Conflict!",
-              text: "Your end date is conflicting with your on process/on going leave! Please check the status of your on process/on going leave.",
-            });
-          } else if (response == "5") {
-            Swal.fire({
-              icon: "info",
-              title: "Starting Date and End Date is Conflict!",
-              text: "You cannot choose a Sunday as your starting date and ending date! Please choose another date.",
+              icon: "error",
+              title: "Error",
+              text: response,
             });
           }
         },

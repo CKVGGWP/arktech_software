@@ -12,7 +12,6 @@ $leave = new LeaveForm();
 if (isset($_GET['calendar'])) {
     $holidays = $leave->holidays();
     $Sundays = $leave->getSunday();
-    // $leaves = $leave->getAllLeaveById($userID);
 
     foreach ($holidays as $holiday) {
         $data[] = array(
@@ -28,13 +27,6 @@ if (isset($_GET['calendar'])) {
         );
     }
 
-    // foreach ($leaves as $leave) {
-    //     $data[] = array(
-    //         'from' => $leave['leaveFrom'],
-    //         'to' => $leave['leaveTo'],
-    //     );
-    // }
-
     echo json_encode($data);
 }
 
@@ -43,13 +35,8 @@ if (isset($_POST['leave'])) {
     $from = $_POST['leaveFrom'];
     $to = $_POST['leaveTo'];
     $purpose = $_POST['purpose'];
-
+    $halfDay = $_POST['halfDay'];
     $uploadFile = $_FILES['uploadFile'];
-    //print_r($uploadFile);
 
-    // $signature = $_POST['signature'];
-
-    // $signature = json_decode($signature);
-
-    $leave->insertLeave($id, $from, $to, $purpose, $uploadFile);
+    $leave->insertLeave($id, $from, $to, $purpose, $uploadFile, $halfDay);
 }

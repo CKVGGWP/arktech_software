@@ -6,6 +6,7 @@ class LeaveStatus extends Database
 {
     public function getTable($id)
     {
+
         $query = "SELECT
                 DISTINCT(s.listId), 
                 s.dateIssued, 
@@ -14,6 +15,7 @@ class LeaveStatus extends Database
                 s.leaveFrom, 
                 s.leaveTo,
                 s.documents,
+                s.halfDayFlag,
                 s.reasonOfLeader,
                 s.dateApproveDenyByLeader,
                 s.status, 
@@ -24,10 +26,10 @@ class LeaveStatus extends Database
                 h.status AS hrStatus, 
                 h.transpoAllowance 
                 FROM system_leaveform s 
-                LEFT JOIN hr_leave h ON h.employeeId = s.employeeNumber";
+                LEFT JOIN hr_leave h ON h.listId = s.listId";
 
         if ($this->getPosition() != 'HR Staff' && $this->getPosition() != 'President') {
-            $query .= " WHERE employeeNumber = '$id'";
+            $query .= " WHERE s.employeeNumber = '$id'";
         }
 
         // $query .= " GROUP BY h.leaveId";
@@ -39,6 +41,9 @@ class LeaveStatus extends Database
         if ($sql->num_rows > 0) {
             while ($result = $sql->fetch_assoc()) {
                 extract($result);
+                $transpo = "";
+                $type = "";
+                $half = "";
 
                 $headApproval = false;
 
@@ -57,18 +62,24 @@ class LeaveStatus extends Database
                     $status = "Approved";
                 }
 
-
-                if ($leaveType == "") {
-                    $leaveType = "Whole Day";
+                if ($halfDayFlag == "0") {
+                    $half = "Whole Day";
                 } else {
-                    $leaveType = "Half Day";
+                    $half = "Half Day";
+                }
+
+
+                if (!empty($leaveType) || $leaveType == 0.5 || $leaveType != NULL) {
+                    $type = "Half Day";
+                } else {
+                    $type = "Whole Day";
                 }
 
 
                 if ($transpoAllowance == "1") {
-                    $transpoAllowance = "Yes";
+                    $transpo = "Yes";
                 } else {
-                    $transpoAllowance = "No";
+                    $transpo = "No";
                 }
 
                 if ($hrStatus == 0) {
@@ -76,6 +87,7 @@ class LeaveStatus extends Database
                 } else {
                     $statusOfHR = "With Pay";
                 }
+
                 $buttonValue = "";
                 if ($documents != "") {
                     //FURTHER EDITIFICATION----------------------------------------------------------------------------------VAL
@@ -90,14 +102,15 @@ class LeaveStatus extends Database
                     date("F j, Y", strtotime($leaveFrom)),
                     date("F j, Y", strtotime($leaveTo)),
                     $buttonValue,
+                    $half,
                     $reasonOfLeader,
                     ($dateApproveDenyByLeader == "0000-00-00" ? "" : date("F j, Y", strtotime($dateApproveDenyByLeader))),
                     $reasonOfSuperior,
                     ($date == "0000-00-00") ? "" : date("F j, Y", strtotime($date)),
                     $hrRemarks,
-                    ($status == "Approved") ? $leaveType : "",
+                    ($status == "Approved") ? $type : "",
                     ($status == "Approved") ? $statusOfHR : "",
-                    ($status == "Approved") ? $transpoAllowance : "",
+                    ($status == "Approved") ? $transpo : "",
                     $status,
                 ];
                 $totalData++;

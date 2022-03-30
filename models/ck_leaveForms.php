@@ -377,6 +377,25 @@ class LeaveForm extends Database
                             $info = "2";
                         }
                     }
+                } else {
+                    // If there is no factory manager, send notification to president and 0422
+                    $higherPosResult = $this->selectPresident();
+
+                    if (
+                        $higherPosResult->num_rows > 0
+                    ) {
+                        while ($higherPosRow = $higherPosResult->fetch_assoc()) {
+                            $higherPosId = $higherPosRow['idNumber'];
+                            $insertHigherPos = $this->notificationQuery($last_id, $higherPosId);
+                            //-----------------Insert notification to user where ID = 0444------------------
+                            if ($insertHigherPos) {
+                                $info = "1";
+                            } else {
+                                $info = "2";
+                            }
+                        }
+                    }
+                    $insertHigherPos2 = $this->notificationQuery($last_id, '0422');
                 }
             } else if ($this->checkString($pos, $this->higherPos)) {
 
@@ -388,7 +407,7 @@ class LeaveForm extends Database
                     while ($higherPosRow = $higherPosResult->fetch_assoc()) {
                         $higherPosId = $higherPosRow['idNumber'];
                         $insertHigherPos = $this->notificationQuery($last_id, $higherPosId);
-
+                        //-----------------Insert notification to user where ID = 0444------------------
                         if ($insertHigherPos) {
                             $info = "1";
                         } else {
@@ -396,6 +415,7 @@ class LeaveForm extends Database
                         }
                     }
                 }
+                $insertHigherPos2 = $this->notificationQuery($last_id, '0422');
             } else {
                 // If employee requests a leave, run this query
                 // If there is a leader, send notification to leader
@@ -473,11 +493,11 @@ class LeaveForm extends Database
         }
     }
 
-    private function insertToDB($id, $fullName, $positionName, $departmentName, $purpose, $from, $to, $fileName)
+    private function insertToDB($id, $fullName, $positionName, $departmentName, $purpose, $from, $to, $fileName, $halfDay)
     {
         $sql = "INSERT INTO system_leaveform 
-        (dateIssued, employeeNumber, employeeName, designation, department, purposeOfLeave, leaveFrom, leaveTo, status, documents)
-        VALUES (NOW(), '$id', '$fullName', '$positionName', '$departmentName', '$purpose', '$from', '$to', '0', '$fileName')";
+        (dateIssued, employeeNumber, employeeName, designation, department, purposeOfLeave, halfDayFlag, leaveFrom, leaveTo, status, documents)
+        VALUES (NOW(), '$id', '$fullName', '$positionName', '$departmentName', '$purpose', '$halfDay', '$from', '$to', '0', '$fileName')";
         $result = $this->connect()->query($sql);
 
         if ($result) {
@@ -488,7 +508,7 @@ class LeaveForm extends Database
     }
 
     // Insert Leave inside Database
-    public function insertLeave($id, $from, $to, $purpose, $uploadFile)
+    public function insertLeave($id, $from, $to, $purpose, $uploadFile, $halfDay)
     {
         $users = $this->getUser($id);
 
@@ -565,7 +585,7 @@ class LeaveForm extends Database
             }
         }
 
-        if ($this->insertToDB($id, $fullName, $positionName, $departmentName, $purpose, $from, $to, $fileLocation)) {
+        if ($this->insertToDB($id, $fullName, $positionName, $departmentName, $purpose, $from, $to, $fileLocation, $halfDay)) {
 
             $lastId = $this->leaveFormLastId();
 
