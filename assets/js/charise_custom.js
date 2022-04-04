@@ -16,7 +16,7 @@ $(document).ready(function () {
           altInput: true,
           altFormat: "F j, Y",
           dateFormat: "Y-m-d",
-          minDate: new Date().fp_incr(1),
+          // minDate: new Date().fp_incr(1),
           disable: parsed,
           locale: {
             firstDayOfWeek: 1, // start week on Monday

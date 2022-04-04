@@ -1,5 +1,7 @@
 <?php
 
+// Modified By CK
+
 class Notifications extends Database
 {
     public function getTable($userID)
@@ -135,7 +137,7 @@ class Notifications extends Database
                     FROM system_leaveform l 
                     LEFT JOIN system_notificationdetails n ON n.notificationKey = l.listId 
                     LEFT JOIN system_notification s ON s.notificationId = n.notificationId 
-                    WHERE s.notificationTarget = '" . $_SESSION['idNumber'] . "' AND l.status = '0' 
+                    WHERE s.notificationTarget = '" . $_SESSION['userID'] . "' AND l.status = '0' 
                     GROUP BY l.department";
         }
 
@@ -196,7 +198,7 @@ class Notifications extends Database
     {
         $leaveId = $this->leaveFormId();
 
-        $link = "/V4/11-3 Employee Leave/controllers/ck_newNotificationController.php?leaveFormId=" . $leaveId;
+        $link = "/V4/14-13 Notification Software/controllers/ck_newNotificationController.php?leaveFormId=" . $leaveId;
 
         $sql = "INSERT INTO system_notificationdetails 
                 (notificationDetail, notificationKey, notificationLink, notificationType)
@@ -381,3 +383,5 @@ class Notifications extends Database
         return $query;
     }
 }
+
+// CK End Code

@@ -6,13 +6,13 @@
 
     <?php include('views/includes/head/head.php'); ?>
     <?php include('controllers/ck_emptySession.php'); ?>
-    <link rel="stylesheet" href="assets/css/slick.css">
+	<link rel="stylesheet" href="assets/css/slick.css">
     <script src="assets/js/slick.min.js"></script>
-    <!-- DIASABLE METHOD-->
+	<!-- DIASABLE METHOD-->
     <style>
-        div.dataTables_paginate {
-            display: none;
-        }
+    	div.dataTables_paginate {
+			display:none;
+		}
     </style>
 
     <!-- End of Head -->

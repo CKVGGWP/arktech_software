@@ -3,12 +3,14 @@
 
   $(document).ready(function () {
     $(".multiple-slides").slick({
-      slidesToShow: 3,
-      slidesToScroll: 1,
-      arrows: true,
+      slidesToShow: 4,
+      slidesToScroll: 3,
       dots: false,
-      nextArrow: "<i class='fa fa-angle-right'></i>",
-      prevArrow: "<i class='fa fa-angle-left'></i>",
+      arrows: true,
+      draggable: false,
+      nextArrow: ".slider-btn-two .next-two",
+      prevArrow: ".slider-btn-two .prev-two",
+    
     });
   });
 })(jQuery);

@@ -10,7 +10,7 @@ function show($param)
 function read_date($str)
 {
     if ($str)
-        return date('F j, Y', strtotime($str));
+        return date('F j, Y, g:i:s a', strtotime($str));
     else
         return null;
 }
@@ -44,7 +44,7 @@ function getTitle()
     if (!empty($id)) :
         $title .= $id . " | Arktech Philippines Inc";
     else :
-        $title .= 'Login | Arktech Philippines Inc';
+        $title .= 'Arktech Philippines Inc';
     endif;
 
     return $title;

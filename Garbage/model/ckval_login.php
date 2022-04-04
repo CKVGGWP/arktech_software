@@ -69,8 +69,8 @@ class Login extends Database
     public function setSessionID()
     {
         $id = $this->getSessionID();
-        $_SESSION['idNumber'] = $id;
+        $_SESSION['userID'] = $id;
 
-        return $_SESSION['idNumber'];
+        return $_SESSION['userID'];
     }
 }

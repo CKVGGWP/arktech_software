@@ -9,6 +9,12 @@
 
 <body>
 
+ <!-- Start of Header -->
+
+    <?php include('views/includes/header/charise_header.php'); ?>
+
+    <!-- End of Header -->
+
     <!-- Start of Index -->
 
     <main class="container-fluid">

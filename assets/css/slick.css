@@ -117,3 +117,15 @@
 .slick-arrow.slick-hidden {
     display: none;
 }
+.slider-btn-two .prev-two,
+.next-two {
+    position: absolute;
+	left: 1220px;
+/* 	left: 1040px; */
+    padding: 1rem 1.5rem;
+    border-radius: 10rem;
+    margin: 0 1rem;
+    cursor: pointer;
+    font-size: 20px;
+}
+

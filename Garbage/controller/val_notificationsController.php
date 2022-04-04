@@ -5,8 +5,7 @@ require("../models/val_notifications.php");
 
 session_start();
 
-$userID = isset($_SESSION['idNumber']) ? $_SESSION['idNumber'] : '';
-
+$userID = isset($_SESSION['userID']) ? $_SESSION['userID'] : '';
 $notifications = new Notifications();
 
 if ($notifications->getPosition($userID) == "HR Staff") {

@@ -64,7 +64,7 @@ class LeaveStatus extends Database
 
                 if ($halfDayFlag == "0") {
                     $half = "Whole Day";
-                } else {
+                } else if ($halfDayFlag == "1") {
                     $half = "Half Day";
                 }
 

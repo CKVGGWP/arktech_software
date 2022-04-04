@@ -53,11 +53,14 @@ $(document).on("click", ".employees", function () {
   $("#listId").val(listId);
 });
 
+// CK Start of Code
+
 $(document).ready(function () {
   $("#submitApproval").prop("disabled", true);
 
   $("#setStatusBTN").prop("disabled", true);
 });
+
 
 $("#decisionOfHead").on("change", function () {
   let des = $(this).val();
@@ -137,7 +140,7 @@ $(document).on("click", ".hr", function () {
   $("#from").val(from);
   $("#to").val(to);
   $("#list").val(list);
-  $("#reason").val(reason);
+  $("#reasonOfApproval").val(reason);
   $("#dateOfApproval").val(date);
 
   $(".titleName").text(empName + " Leave Details");
@@ -177,12 +180,9 @@ $(document).on("click", "#setStatusBTN", function () {
   if (decision == 3) {
     let leaveRemarks = $("#leaveRemarks").val();
     remarks = leaveRemarks;
-  } else if (decision == 4) {
+  } else if (decison == 4) {
     let disapprovalRemarks = $("#disapprovalRemarks").val();
     remarks = disapprovalRemarks;
-  } else {
-    $(this).prop("disabled", true);
-    return false;
   }
 
   if (remarks == "") {
@@ -216,3 +216,4 @@ $(document).on("click", "#setStatusBTN", function () {
     });
   }
 });
+// CK End of Code

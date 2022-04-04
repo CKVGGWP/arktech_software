@@ -10,31 +10,23 @@ $(document).ready(function () {
     ajax: {
       url: "controllers/val_leaveStatusController.php", // json datasource
       type: "POST", // method  , by default get
-
+      
       error: function () {
         // error handling
       },
     },
-    createdRow: function (data) {},
+    createdRow: function( row, data, index ){},
     columnDefs: [],
-    fixedColumns: true,
+    fixedColumns: false,
     deferRender: true,
-    scrollY: 500,
-    scrollX: false,
+    scrollY: 400,
+    scrollX: true,
     scroller: {
       loadingIndicator: true,
     },
     stateSave: false,
   });
-  dataTable.on("draw.dt", function () {
-    var info = dataTable.page.info();
-    dataTable
-      .column(1)
-      .nodes()
-      .each(function (cell, i) {
-        cell.innerHTML = i + 1 + info.start;
-      });
-  });
+  
 });
 
 function filter() {

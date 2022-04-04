@@ -20,11 +20,11 @@
 
     <div class="container-fluid">
         <div class="row">
-
+           
             <!-- Start of Leave Form -->
 
             <?php include('views/leaveForm/val_body.php'); ?>
-
+        
             <!-- End of Leave Form -->
         </div>
     </div>

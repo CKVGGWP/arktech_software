@@ -103,7 +103,7 @@
                             <div>
                                 <label class="col-sm-5">Approve Leave?</label>
                                 <select class="form-control" id="decisionOfHead" name="decisionOfHead">
-                                    <option>Select Decision</option>
+                                	<option>Select Decision</option>
                                     <option value="approve">Yes</option>
                                     <option value="disapprove">No</option>
                                 </select>

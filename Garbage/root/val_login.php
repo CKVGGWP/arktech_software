@@ -14,7 +14,6 @@
 <body>
 
     <!-- Start of Login -->
-
     <?php include('views/login/val_body.php'); ?>
 
     <!-- End of Login -->

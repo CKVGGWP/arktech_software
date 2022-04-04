@@ -54,8 +54,8 @@ class ByPassStatus extends Database
                 } else {
                     $statusOfHR = "With Pay";
                 }
-
-                if ($type == 0) {
+            
+            	if ($type == 0) {
                     $type = "Sick Leave";
                 } else if ($type == 1) {
                     $type = "Vacation Leave";

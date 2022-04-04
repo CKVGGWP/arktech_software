@@ -28,12 +28,12 @@ $(document).ready(function () {
   });
   dataTable.on("draw.dt", function () {
     var info = dataTable.page.info();
-    dataTable
-      .column(1)
-      .nodes()
-      .each(function (cell, i) {
-        cell.innerHTML = i + 1 + info.start;
-      });
+    // dataTable
+    //   .column(0)
+    //   .nodes()
+    //   .each(function (cell, i) {
+    //     cell.innerHTML = i + 1 + info.start;
+    //   });
   });
 });
 

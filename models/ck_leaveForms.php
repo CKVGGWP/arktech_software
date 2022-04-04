@@ -247,6 +247,7 @@ class LeaveForm extends Database
                 LEFT JOIN hr_positions p ON t.position = p.positionId 
                 WHERE p.positionName 
                 LIKE '%president%'
+                AND NOT p.positionName LIKE '%vice%'
                 AND t.status = 1";
         $query = $this->connect()->query($sql);
 

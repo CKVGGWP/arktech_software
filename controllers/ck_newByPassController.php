@@ -26,5 +26,6 @@ if (isset($_POST['multi'])) {
         'purpose' => $purpose
     );
 
-    $byPass->byPassInsert($data);
+
+	$byPass->byPassInsert($data);
 }

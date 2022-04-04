@@ -26,14 +26,14 @@
 
     <!-- Start of index -->
 
-    <?php include('views/checkLeaveStatus/val_body.php'); ?>
+    <?php include('views/checkBypassStatus/charise_body.php'); ?>
 
     <!-- End of index -->
 
     <!-- Start of Footer -->
 
     <?php include('views/includes/footer/footer.php'); ?>
-    <script src="assets/js/val_checkLeaveStatus.js"></script>
+    <script src="assets/js/ck_byPassLeaveStatus.js"></script>
 
     <!-- End of Footer -->
 </body>
