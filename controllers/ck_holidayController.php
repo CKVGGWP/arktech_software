@@ -40,3 +40,10 @@ if (isset($_POST['leave'])) {
 
     $leave->insertLeave($id, $from, $to, $purpose, $uploadFile, $halfDay);
 }
+
+if (isset($_POST['upload'])) {
+    $id = $_POST['listID'];
+    $uploadFile = $_FILES['file'];
+
+    echo $leave->insertFile($id, $uploadFile);
+}

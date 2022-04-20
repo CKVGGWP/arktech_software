@@ -633,4 +633,37 @@ class LeaveForm extends Database
             return false;
         }
     }
+
+    public function insertFile($listID, $files)
+    {
+        $listID = $_POST['listID'];
+        $files = $_FILES['file'];
+        $fileName = $files['name'];
+        $fileTmpName = $files['tmp_name'];
+        $fileExt = explode('.', $fileName);
+        $fileActualExt = strtolower(end($fileExt));
+        $date = date('Y-m-d');
+        $fileNameNew = str_replace("." . $fileActualExt, "", $fileName) . "_" . $date . "." . $fileActualExt;
+        $allowed = array('pdf', 'jpeg', 'jpg', 'png');
+
+        if (!empty($fileName)) {
+            if (in_array($fileActualExt, $allowed)) {
+                $fileDestination = '../Leave Documents/' . $fileNameNew;
+                move_uploaded_file($fileTmpName, $fileDestination);
+                $fileLocation = "/V4/11-3 Employee Leave/Leave Documents/" . $fileNameNew;
+            } else {
+                echo "File type not supported";
+                exit();
+            }
+        }
+
+        $sql = "UPDATE system_leaveform SET documents = '$fileLocation' WHERE listId = '$listID'";
+        $query = $this->connect()->query($sql);
+
+        if ($query) {
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

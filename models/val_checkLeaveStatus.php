@@ -98,7 +98,7 @@ class LeaveStatus extends Database
                 $data[] = [
                     date("F j, Y", strtotime($dateIssued)),
                     $employeeName,
-                    $purposeOfLeave,
+                    ($this->getPosition() != 'HR Staff'  && $documents != "") ? $purposeOfLeave : $purposeOfLeave . ' ' . ' ' . " <a href='#uploadFileModal' class='btn btn-outline-primary btn-sm uploadFile' data-bs-toggle='modal'><i class='fa fa-upload'></i> Upload</a> <input type='hidden' class='listID' value='" . $listId . "'>",
                     date("F j, Y", strtotime($leaveFrom)),
                     date("F j, Y", strtotime($leaveTo)),
                     $buttonValue,

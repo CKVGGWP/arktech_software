@@ -10,12 +10,12 @@ $(document).ready(function () {
     ajax: {
       url: "controllers/val_leaveStatusController.php", // json datasource
       type: "POST", // method  , by default get
-      
+
       error: function () {
         // error handling
       },
     },
-    createdRow: function( row, data, index ){},
+    createdRow: function (row, data, index) {},
     columnDefs: [],
     fixedColumns: false,
     deferRender: true,
@@ -26,7 +26,6 @@ $(document).ready(function () {
     },
     stateSave: false,
   });
-  
 });
 
 function filter() {
@@ -50,3 +49,75 @@ function filter() {
     }
   }
 }
+
+$(document).on("click", ".uploadFile", function () {
+  let listID = $(this).data("id");
+
+  $("#uploadFileHR").on("submit", function (e) {
+    e.preventDefault();
+
+    let formData = new FormData(this);
+
+    console.log(listID);
+
+    let files = $("#exampleFormControlFile1")[0].files[0];
+
+    if (files == undefined) {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Please select a file to upload!",
+      });
+    } else if (files.type != "application/pdf") {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "File must be a PDF file",
+      });
+    } else {
+      formData.append("listID", listID);
+      formData.append("file", files);
+      formData.append("upload", "upload");
+
+      $.ajax({
+        url: "controllers/ck_holidayController.php",
+        type: "POST",
+        data: formData,
+        cache: false,
+        contentType: false,
+        processData: false,
+        beforeSend: function () {
+          Swal.fire({
+            title: "Uploading...",
+            html:
+              '<div class="spinner-border text-primary" role="status">' +
+              '<span class="sr-only">Loading...</span>' +
+              "</div>",
+            showConfirmButton: false,
+            allowOutsideClick: false,
+          });
+        },
+        complete: function () {
+          Swal.close();
+        },
+        success: function (data) {
+          if (data) {
+            Swal.fire({
+              icon: "success",
+              title: "Success!",
+              text: "File has been uploaded!",
+            }).then((result) => {
+              location.reload();
+            });
+          } else {
+            Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: "Something went wrong!",
+            });
+          }
+        },
+      });
+    }
+  });
+});
